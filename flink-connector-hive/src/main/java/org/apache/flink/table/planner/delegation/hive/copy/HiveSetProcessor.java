@@ -18,6 +18,7 @@
 
 package org.apache.flink.table.planner.delegation.hive.copy;
 
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.connectors.hive.FlinkHiveException;
 import org.apache.flink.table.api.TableConfig;
 
@@ -112,7 +113,7 @@ public class HiveSetProcessor {
             String key,
             String varvalue) {
         String value = new VariableSubstitution(() -> hiveVariables).substitute(hiveConf, varvalue);
-        if (hiveConf.getBoolVar(HiveConf.ConfVars.HIVECONFVALIDATION)) {
+        if (hiveConf.getBoolVar(HiveConfVars.HIVE_CONF_VALIDATION)) {
             HiveConf.ConfVars confVars = HiveConf.getConfVars(key);
             if (confVars != null) {
                 if (!confVars.isType(value)) {

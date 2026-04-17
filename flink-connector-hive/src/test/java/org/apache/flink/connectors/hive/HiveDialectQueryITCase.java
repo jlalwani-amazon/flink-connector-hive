@@ -91,11 +91,11 @@ public class HiveDialectQueryITCase {
     public static void setup() throws Exception {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         // required by query like "src.`[k].*` from src"
-        hiveCatalog.getHiveConf().setVar(HiveConf.ConfVars.HIVE_QUOTEDID_SUPPORT, "none");
+        hiveCatalog.getHiveConf().setVar(HiveConfVars.HIVE_QUOTEDID_SUPPORT, "none");
         hiveCatalog.open();
         tableEnv = getTableEnvWithHiveCatalog();
         tableEnv.getConfig().set(BatchExecutionOptions.ADAPTIVE_AUTO_PARALLELISM_ENABLED, false);
-        warehouse = hiveCatalog.getHiveConf().getVar(HiveConf.ConfVars.METASTOREWAREHOUSE);
+        warehouse = hiveCatalog.getHiveConf().getVar(HiveConfVars.METASTORE_WAREHOUSE);
 
         // create tables
         tableEnv.executeSql("create table foo (x int, y int)");
@@ -472,7 +472,7 @@ public class HiveDialectQueryITCase {
 
     @Test
     public void testInsertDirectory() throws Exception {
-        String warehouse = hiveCatalog.getHiveConf().getVar(HiveConf.ConfVars.METASTOREWAREHOUSE);
+        String warehouse = hiveCatalog.getHiveConf().getVar(HiveConfVars.METASTORE_WAREHOUSE);
 
         // test insert overwrite directory with row format parameters
         tableEnv.executeSql("create table map_table (foo STRING , bar MAP<STRING, INT>)");
@@ -593,7 +593,7 @@ public class HiveDialectQueryITCase {
                     CollectionUtil.iteratorToList(
                             tableEnv.executeSql("select * from destp1").collect());
             String defaultPartitionName =
-                    hiveCatalog.getHiveConf().getVar(HiveConf.ConfVars.DEFAULTPARTITIONNAME);
+                    hiveCatalog.getHiveConf().getVar(HiveConfVars.DEFAULT_PARTITION_NAME);
             assertThat(result.toString())
                     .isEqualTo(
                             String.format(

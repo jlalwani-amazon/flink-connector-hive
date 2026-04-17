@@ -18,6 +18,7 @@
 
 package org.apache.flink.table.planner.delegation.hive;
 
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.table.calcite.bridge.CalciteContext;
 import org.apache.flink.table.catalog.CatalogRegistry;
@@ -1261,7 +1262,7 @@ public class HiveParserCalcitePlanner {
                         || !qbp.getDestCubes().isEmpty();
 
         // 2. Sanity check
-        if (semanticAnalyzer.getConf().getBoolVar(HiveConf.ConfVars.HIVEGROUPBYSKEW)
+        if (semanticAnalyzer.getConf().getBoolVar(HiveConfVars.HIVE_GROUPBY_SKEW)
                 && qbp.getDistinctFuncExprsForClause(detsClauseName).size() > 1) {
             throw new SemanticException(ErrorMsg.UNSUPPORTED_MULTIPLE_DISTINCTS.getMsg());
         }
@@ -1610,7 +1611,7 @@ public class HiveParserCalcitePlanner {
             Integer limit = qb.getParseInfo().getDestLimit(dest);
             if (limit == null) {
                 String mapRedMode =
-                        semanticAnalyzer.getConf().getVar(HiveConf.ConfVars.HIVEMAPREDMODE);
+                        semanticAnalyzer.getConf().getVar(HiveConfVars.HIVE_MAPRED_MODE);
                 boolean banLargeQuery =
                         Boolean.parseBoolean(
                                 semanticAnalyzer

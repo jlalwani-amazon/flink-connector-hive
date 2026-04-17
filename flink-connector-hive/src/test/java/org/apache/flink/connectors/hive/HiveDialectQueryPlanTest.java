@@ -45,7 +45,7 @@ public class HiveDialectQueryPlanTest {
     public static void setup() throws Exception {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         // required by query like "src.`[k].*` from src"
-        hiveCatalog.getHiveConf().setVar(HiveConf.ConfVars.HIVE_QUOTEDID_SUPPORT, "none");
+        hiveCatalog.getHiveConf().setVar(HiveConfVars.HIVE_QUOTEDID_SUPPORT, "none");
         hiveCatalog.open();
         tableEnv = getTableEnvWithHiveCatalog();
 
