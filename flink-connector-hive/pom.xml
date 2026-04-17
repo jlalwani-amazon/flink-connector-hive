@@ -44,6 +44,9 @@ under the License.
 		<hive.hadoop.version>2.10.2</hive.hadoop.version>
 		<hiverunner.version>4.0.0</hiverunner.version>
 		<reflections.version>0.9.8</reflections.version>
+		<!-- Hive uses illegal reflective access (StringInternUtils, FunctionRegistry);
+		     required on Java 17+ until upstream Hive removes setAccessible calls. -->
+		<flink.surefire.baseArgLine>-XX:+UseG1GC -Xms256m --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens java.base/java.time=ALL-UNNAMED --add-exports java.security.jgss/sun.security.krb5=ALL-UNNAMED</flink.surefire.baseArgLine>
 	</properties>
 
 	<dependencyManagement>
@@ -1424,6 +1427,68 @@ under the License.
 			<activation>
 				<jdk>[11,)</jdk>
 			</activation>
+		</profile>
+		<profile>
+			<id>hive4</id>
+			<properties>
+				<hive.version>4.0.0</hive.version>
+				<hive.hadoop.version>3.3.6</hive.hadoop.version>
+				<hive4.datanucleus-api-jdo.version>5.2.8</hive4.datanucleus-api-jdo.version>
+				<hive4.datanucleus-rdbms.version>5.2.10</hive4.datanucleus-rdbms.version>
+			</properties>
+			<dependencies>
+				<!--
+					hive-exec 4.x bundles protobuf 3.x (unshaded). Override the transitive
+					protobuf 2.5.0 from Hadoop so the bundled ORC/protobuf code works on
+					the flat test classpath. The production fat jar handles this via shading.
+				-->
+				<dependency>
+					<groupId>com.google.protobuf</groupId>
+					<artifactId>protobuf-java</artifactId>
+					<version>3.3.0</version>
+					<scope>test</scope>
+				</dependency>
+				<!-- Hive 4 requires compatible DataNucleus for the embedded metastore.
+					 4.0.x uses 5.x, 4.1+ uses 6.x. Override via -Dhive4.datanucleus-api-jdo.version=6.0.3 etc. -->
+				<dependency>
+					<groupId>org.datanucleus</groupId>
+					<artifactId>datanucleus-api-jdo</artifactId>
+					<version>${hive4.datanucleus-api-jdo.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.datanucleus</groupId>
+					<artifactId>datanucleus-rdbms</artifactId>
+					<version>${hive4.datanucleus-rdbms.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<!-- Hive 4 needs Hadoop 3.x; promote hdfs-client from provided to test -->
+				<dependency>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-hdfs-client</artifactId>
+					<version>3.3.6</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-hdfs</artifactId>
+					<version>3.3.6</version>
+					<scope>test</scope>
+				</dependency>
+				<!-- HiveShimV400 is loaded by reflection at runtime -->
+				<dependency>
+					<groupId>org.apache.flink</groupId>
+					<artifactId>flink-connector-hive-4.0.0</artifactId>
+					<version>${project.version}</version>
+					<scope>runtime</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>org.apache.hive</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+			</dependencies>
 		</profile>
 	</profiles>
 </project>
