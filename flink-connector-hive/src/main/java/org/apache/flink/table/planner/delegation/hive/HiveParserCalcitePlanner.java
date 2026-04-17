@@ -28,6 +28,7 @@ import org.apache.flink.table.catalog.ObjectIdentifier;
 import org.apache.flink.table.catalog.ResolvedCatalogTable;
 import org.apache.flink.table.catalog.ResolvedSchema;
 import org.apache.flink.table.catalog.hive.util.HiveTypeUtil;
+import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
 import org.apache.flink.table.functions.hive.conversion.HiveInspectors;
 import org.apache.flink.table.planner.delegation.hive.copy.HiveASTParseDriver;
 import org.apache.flink.table.planner.delegation.hive.copy.HiveASTParseUtils;
@@ -60,6 +61,7 @@ import org.apache.flink.util.CollectionUtil;
 import org.apache.flink.util.Preconditions;
 
 import com.google.common.collect.ImmutableList;
+
 import org.apache.calcite.plan.RelOptCluster;
 import org.apache.calcite.plan.RelTraitSet;
 import org.apache.calcite.plan.ViewExpanders;
@@ -107,7 +109,7 @@ import org.apache.calcite.util.CompositeList;
 import org.apache.calcite.util.ImmutableBitSet;
 import org.apache.calcite.util.Pair;
 import org.apache.calcite.util.Util;
-import org.apache.hadoop.hive.common.ObjectPair;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.ErrorMsg;
@@ -950,7 +952,7 @@ public class HiveParserCalcitePlanner {
 
             HiveParserASTNode subQueryAST = subQueries.get(i);
             // HiveParserSubQueryUtils.rewriteParentQueryWhere(clonedSearchCond, subQueryAST);
-            ObjectPair<Boolean, Integer> subqInfo = new ObjectPair<>(false, 0);
+            MutablePair<Boolean, Integer> subqInfo = new MutablePair<>(false, 0);
             if (!topLevelConjunctCheck(clonedSearchCond, subqInfo)) {
                 // Restriction.7.h :: SubQuery predicates can appear only as top level conjuncts.
                 throw new SemanticException(
@@ -1547,7 +1549,7 @@ public class HiveParserCalcitePlanner {
                     throw new SemanticException(
                             "Duplicates detected when adding columns to RR: see previous message");
                 }
-                int vColPos = inputRR.getRowSchema().getSignature().size();
+                int vColPos = HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
                 for (Pair<HiveParserASTNode, TypeInfo> astTypePair : vcASTAndType) {
                     addedProjectRR.putExpression(
                             astTypePair.getKey(),
@@ -1705,7 +1707,7 @@ public class HiveParserCalcitePlanner {
                     throw new SemanticException(
                             "Duplicates detected when adding columns to RR: see previous message");
                 }
-                int vcolPos = inputRR.getRowSchema().getSignature().size();
+                int vcolPos = HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
                 for (Pair<HiveParserASTNode, TypeInfo> astTypePair : vcASTAndType) {
                     obSyntheticProjectRR.putExpression(
                             astTypePair.getKey(),
@@ -1953,7 +1955,7 @@ public class HiveParserCalcitePlanner {
             List<HiveParserWindowingSpec.WindowExpressionSpec> windowExpressions) {
         // 1. Build Column Names
         Set<String> colNames = new HashSet<>();
-        List<ColumnInfo> colInfos = outRR.getRowSchema().getSignature();
+        List<ColumnInfo> colInfos = HiveReflectionUtils.getRowSchemaSignature(outRR.getRowSchema());
         ArrayList<String> columnNames = new ArrayList<>();
         Map<String, String> windowToAlias = null;
         if (windowExpressions != null) {
@@ -2664,7 +2666,7 @@ public class HiveParserCalcitePlanner {
                 i < correlRel.getRowType().getFieldCount();
                 i++) {
             projects.add(cluster.getRexBuilder().makeInputRef(correlRel, i));
-            ColumnInfo inputColInfo = correlRR.getRowSchema().getSignature().get(i);
+            ColumnInfo inputColInfo = HiveReflectionUtils.getRowSchemaSignature(correlRR.getRowSchema()).get(i);
             String colAlias = inputColInfo.getAlias();
             ColumnInfo colInfo =
                     new ColumnInfo(

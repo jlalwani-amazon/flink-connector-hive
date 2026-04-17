@@ -234,10 +234,19 @@ public class HiveShowTableUtils {
                 createTabStringBuilder.append(String.format("LOCATION\n%s\n", tblLocation));
             }
 
-            // Table properties
-            duplicateProps.addAll(
-                    Arrays.stream(StatsSetupConst.TABLE_PARAMS_STATS_KEYS)
-                            .collect(Collectors.toList()));
+            // Table properties — TABLE_PARAMS_STATS_KEYS changed from String[] to List<String>
+            // in Hive 4, use reflection to handle both.
+            try {
+                Object statsKeys =
+                        StatsSetupConst.class.getField("TABLE_PARAMS_STATS_KEYS").get(null);
+                if (statsKeys instanceof String[]) {
+                    duplicateProps.addAll(Arrays.asList((String[]) statsKeys));
+                } else {
+                    duplicateProps.addAll((java.util.Collection<String>) statsKeys);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to read TABLE_PARAMS_STATS_KEYS", e);
+            }
             String tblProperties = propertiesToString(tbl.getParameters(), duplicateProps);
             createTabStringBuilder.append(String.format("TBLPROPERTIES (\n%s)\n", tblProperties));
             showCreateTableString = createTabStringBuilder.toString();

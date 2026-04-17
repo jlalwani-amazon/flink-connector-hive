@@ -29,6 +29,8 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import org.apache.hadoop.hive.ql.exec.ColumnInfo;
+import org.apache.hadoop.hive.ql.exec.RowSchema;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -120,5 +122,23 @@ public class HiveReflectionUtils {
         }
         res.setAccessible(true);
         return res;
+    }
+
+    /**
+     * Calls {@code RowSchema.getSignature()} via reflection to handle the return type change from
+     * {@code ArrayList} to {@code List} in Hive 4.
+     *
+     * <p>This method stays in HiveReflectionUtils (rather than HiveShim) because its 11+ callers
+     * don't have access to a HiveShim instance.
+     */
+    public static List<ColumnInfo> getRowSchemaSignature(RowSchema rowSchema) {
+        try {
+            Method method = RowSchema.class.getMethod("getSignature");
+            @SuppressWarnings("unchecked")
+            List<ColumnInfo> result = (List<ColumnInfo>) method.invoke(rowSchema);
+            return result;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to call RowSchema.getSignature()", e);
+        }
     }
 }

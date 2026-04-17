@@ -237,13 +237,15 @@ public class HiveParserUtils {
                                 ((MapTypeInfo) typeInfo).getMapValueTypeInfo(), relTypeFactory);
                 return relTypeFactory.createMapType(keyType, valType);
             case STRUCT:
-                List<TypeInfo> types = ((StructTypeInfo) typeInfo).getAllStructFieldTypeInfos();
+                List<TypeInfo> types = HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion()).getStructFieldTypeInfos((StructTypeInfo) typeInfo);
                 List<RelDataType> convertedTypes = new ArrayList<>(types.size());
                 for (TypeInfo type : types) {
                     convertedTypes.add(toRelDataType(type, relTypeFactory));
                 }
                 return relTypeFactory.createStructType(
-                        convertedTypes, ((StructTypeInfo) typeInfo).getAllStructFieldNames());
+                        convertedTypes,
+                        HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
+                                .getStructFieldNames((StructTypeInfo) typeInfo));
             case UNION:
             default:
                 throw new SemanticException(

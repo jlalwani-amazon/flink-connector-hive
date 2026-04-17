@@ -187,7 +187,7 @@ public class HiveWriterFactory implements Serializable {
         ReflectionUtils.setConf(recordSerDe, jobConf);
 
         // TODO: support partition properties, for now assume they're same as table properties
-        SerDeUtils.initializeSerDe((Deserializer) recordSerDe, jobConf, tableProperties, null);
+        hiveShim.initializeSerDe((Deserializer) recordSerDe, jobConf, tableProperties, null);
 
         this.formatFields = allColumns.length - partitionColumns.length;
         this.hiveConversions = new HiveObjectConversion[formatFields];
