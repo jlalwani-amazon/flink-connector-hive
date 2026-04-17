@@ -18,6 +18,7 @@
 
 package org.apache.flink.table.planner.delegation.hive.copy;
 
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.table.catalog.CatalogPartitionSpec;
 import org.apache.flink.table.catalog.CatalogRegistry;
@@ -725,7 +726,7 @@ public class HiveParserBaseSemanticAnalyzer {
 
         HiveParserTypeCheckCtx typeCheckCtx =
                 new HiveParserTypeCheckCtx(null, frameworkConfig, cluster);
-        String defaultPartitionName = HiveConf.getVar(conf, HiveConf.ConfVars.DEFAULTPARTITIONNAME);
+        String defaultPartitionName = HiveConf.getVar(conf, HiveConfVars.DEFAULT_PARTITION_NAME);
         boolean result = true;
         for (Node childNode : astNode.getChildren()) {
             HiveParserASTNode childASTNode = (HiveParserASTNode) childNode;
@@ -1037,7 +1038,7 @@ public class HiveParserBaseSemanticAnalyzer {
     public static void processPositionAlias(HiveParserASTNode ast, HiveConf conf)
             throws SemanticException {
         boolean isBothByPos =
-                HiveConf.getBoolVar(conf, HiveConf.ConfVars.HIVE_GROUPBY_ORDERBY_POSITION_ALIAS);
+                HiveConf.getBoolVar(conf, HiveConfVars.HIVE_GROUPBY_ORDERBY_POSITION_ALIAS);
         boolean isGbyByPos =
                 isBothByPos
                         || Boolean.parseBoolean(conf.get("hive.groupby.position.alias", "false"));
@@ -1980,7 +1981,7 @@ public class HiveParserBaseSemanticAnalyzer {
             FrameworkConfig frameworkConfig,
             RelOptCluster cluster)
             throws SemanticException {
-        if (!HiveConf.getBoolVar(conf, HiveConf.ConfVars.HIVE_TYPE_CHECK_ON_INSERT)) {
+        if (!HiveConf.getBoolVar(conf, HiveConfVars.HIVE_TYPE_CHECK_ON_INSERT)) {
             return;
         }
 
@@ -2197,7 +2198,7 @@ public class HiveParserBaseSemanticAnalyzer {
                 if (numDynParts > 0) {
                     int numStaPart = parts.size() - numDynParts;
                     if (numStaPart == 0
-                            && conf.getVar(HiveConf.ConfVars.DYNAMICPARTITIONINGMODE)
+                            && conf.getVar(HiveConfVars.DYNAMIC_PARTITIONING_MODE)
                                     .equalsIgnoreCase("strict")) {
                         throw new SemanticException(
                                 ErrorMsg.DYNAMIC_PARTITION_STRICT_MODE.getMsg());

@@ -18,6 +18,7 @@
 
 package org.apache.flink.table.planner.delegation.hive.parse;
 
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.table.api.Schema;
@@ -292,16 +293,16 @@ public class HiveParserDDLSemanticAnalyzer {
         this.functionCatalog = calciteContext.getFunctionCatalog();
         reservedPartitionValues = new HashSet<>();
         // Partition can't have this name
-        reservedPartitionValues.add(HiveConf.getVar(conf, HiveConf.ConfVars.DEFAULTPARTITIONNAME));
+        reservedPartitionValues.add(HiveConf.getVar(conf, HiveConfVars.DEFAULT_PARTITION_NAME));
         reservedPartitionValues.add(
-                HiveConf.getVar(conf, HiveConf.ConfVars.DEFAULT_ZOOKEEPER_PARTITION_NAME));
+                HiveConf.getVar(conf, HiveConfVars.DEFAULT_ZOOKEEPER_PARTITION_NAME));
         // Partition value can't end in this suffix
         reservedPartitionValues.add(
-                HiveConf.getVar(conf, HiveConf.ConfVars.METASTORE_INT_ORIGINAL));
+                HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_ORIGINAL));
         reservedPartitionValues.add(
-                HiveConf.getVar(conf, HiveConf.ConfVars.METASTORE_INT_ARCHIVED));
+                HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_ARCHIVED));
         reservedPartitionValues.add(
-                HiveConf.getVar(conf, HiveConf.ConfVars.METASTORE_INT_EXTRACTED));
+                HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_EXTRACTED));
     }
 
     private Table getTable(ObjectPath tablePath) {
@@ -1800,7 +1801,7 @@ public class HiveParserDDLSemanticAnalyzer {
         return new ShowPartitionsOperation(
                 tableIdentifier,
                 spec,
-                HiveConf.getVar(conf, HiveConf.ConfVars.DEFAULTPARTITIONNAME));
+                HiveConf.getVar(conf, HiveConfVars.DEFAULT_PARTITION_NAME));
     }
 
     private Operation convertShowDatabases(String catalogName) {
@@ -2271,7 +2272,7 @@ public class HiveParserDDLSemanticAnalyzer {
         } else {
             retValue = tblProp;
         }
-        String paraString = HiveConf.getVar(conf, HiveConf.ConfVars.NEWTABLEDEFAULTPARA);
+        String paraString = HiveConf.getVar(conf, HiveConfVars.NEW_TABLE_DEFAULT_PARA);
         if (paraString != null && !paraString.isEmpty()) {
             for (String keyValuePair : paraString.split(",")) {
                 String[] keyValue = keyValuePair.split("=", 2);

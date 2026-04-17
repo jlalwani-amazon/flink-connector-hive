@@ -44,6 +44,7 @@ import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.utils.PartitionPathUtils;
 import org.apache.flink.util.Preconditions;
 import org.apache.flink.util.StringUtils;
+import org.apache.flink.connectors.hive.HiveConfVars;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -131,9 +132,9 @@ public class HiveTestUtils {
             HiveConf.setHiveSiteLocation(classLoader.getResource(HiveCatalog.HIVE_SITE_FILE));
             HiveConf hiveConf = new HiveConf();
             hiveConf.setVar(
-                    HiveConf.ConfVars.METASTOREWAREHOUSE,
+                    HiveConfVars.METASTORE_WAREHOUSE,
                     TEMPORARY_FOLDER.newFolder("hive_warehouse").getAbsolutePath());
-            hiveConf.setVar(HiveConf.ConfVars.METASTORECONNECTURLKEY, warehouseUri);
+            hiveConf.setVar(HiveConfVars.METASTORE_CONNECT_URL_KEY, warehouseUri);
             return hiveConf;
         } catch (IOException e) {
             throw new CatalogException("Failed to create test HiveConf to HiveCatalog.", e);

@@ -18,6 +18,7 @@
 
 package org.apache.flink.connectors.hive;
 
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.connector.file.src.FileSourceSplit;
 import org.apache.flink.connector.file.src.enumerate.FileEnumerator;
@@ -107,7 +108,7 @@ public class HiveSourceFileEnumerator implements FileEnumerator {
     }
 
     private static boolean supportSetSplitMaxSize(List<HiveTablePartition> partitions) {
-        // now, the configuration 'HiveConf.ConfVars.MAPREDMAXSPLITSIZE' we set only
+        // now, the configuration 'HiveConfVars.MAPRED_MAX_SPLIT_SIZE' we set only
         // works for orc format
         for (HiveTablePartition partition : partitions) {
             String serializationLib =
@@ -137,7 +138,7 @@ public class HiveSourceFileEnumerator implements FileEnumerator {
         long maxSplitBytes =
                 calculateMaxSplitBytes(
                         totalByteWithOpenCost, minNumSplits, defaultMaxSplitBytes, openCost);
-        jobConf.set(HiveConf.ConfVars.MAPREDMAXSPLITSIZE.varname, String.valueOf(maxSplitBytes));
+        jobConf.set(HiveConfVars.MAPRED_MAX_SPLIT_SIZE.varname, String.valueOf(maxSplitBytes));
     }
 
     private static long calculateMaxSplitBytes(

@@ -27,6 +27,7 @@ import org.apache.flink.table.catalog.hive.HiveTestUtils;
 import org.apache.flink.table.factories.FactoryUtil;
 import org.apache.flink.testutils.executor.TestExecutorResource;
 import org.apache.flink.util.TestLogger;
+import org.apache.flink.connectors.hive.HiveConfVars;
 
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.junit.ClassRule;
@@ -81,7 +82,7 @@ public class HiveCatalogFactoryTest extends TestLogger {
         assertThat(
                         ((HiveCatalog) actualCatalog)
                                 .getHiveConf()
-                                .getVar(HiveConf.ConfVars.METASTOREURIS))
+                                .getVar(HiveConfVars.METASTORE_URIS))
                 .isEqualTo("dummy-hms");
         checkEquals(expectedCatalog, (HiveCatalog) actualCatalog);
     }

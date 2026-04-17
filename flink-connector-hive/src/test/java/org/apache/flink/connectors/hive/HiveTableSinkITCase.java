@@ -573,7 +573,7 @@ class HiveTableSinkITCase {
 
         String successFileName = tEnv.getConfig().get(SINK_PARTITION_COMMIT_SUCCESS_FILE_NAME);
         String warehouse =
-                hiveCatalog.getHiveConf().get(HiveConf.ConfVars.METASTOREWAREHOUSE.varname);
+                hiveCatalog.getHiveConf().get(HiveConfVars.METASTORE_WAREHOUSE.varname);
 
         tEnv.executeSql("CREATE TABLE zm_test_non_partition_table (name string)");
         tEnv.executeSql(
@@ -623,7 +623,7 @@ class HiveTableSinkITCase {
         TableEnvironment tEnv = HiveTestUtils.createTableEnvInBatchMode(SqlDialect.HIVE);
         tEnv.registerCatalog(hiveCatalog.getName(), hiveCatalog);
         tEnv.useCatalog(hiveCatalog.getName());
-        String wareHouse = hiveCatalog.getHiveConf().getVar(HiveConf.ConfVars.METASTOREWAREHOUSE);
+        String wareHouse = hiveCatalog.getHiveConf().getVar(HiveConfVars.METASTORE_WAREHOUSE);
         // disable auto statistic first
         tEnv.getConfig().set(HiveOptions.TABLE_EXEC_HIVE_SINK_STATISTIC_AUTO_GATHER_ENABLE, false);
         // test non-partition table

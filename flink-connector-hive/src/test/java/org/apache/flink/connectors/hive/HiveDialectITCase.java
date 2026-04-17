@@ -106,9 +106,9 @@ public class HiveDialectITCase {
         hiveCatalog
                 .getHiveConf()
                 .setBoolVar(
-                        HiveConf.ConfVars.METASTORE_DISALLOW_INCOMPATIBLE_COL_TYPE_CHANGES, false);
+                        HiveConfVars.METASTORE_DISALLOW_INCOMPATIBLE_COL_TYPE_CHANGES, false);
         hiveCatalog.open();
-        warehouse = hiveCatalog.getHiveConf().getVar(HiveConf.ConfVars.METASTOREWAREHOUSE);
+        warehouse = hiveCatalog.getHiveConf().getVar(HiveConfVars.METASTORE_WAREHOUSE);
         tableEnv = HiveTestUtils.createTableEnvInBatchMode();
         tableEnv.getConfig().setSqlDialect(SqlDialect.HIVE);
         tableEnv.registerCatalog(hiveCatalog.getName(), hiveCatalog);

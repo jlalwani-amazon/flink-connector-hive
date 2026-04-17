@@ -18,6 +18,7 @@
 
 package org.apache.flink.table.planner.delegation.hive.copy;
 
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.api.Schema;
@@ -57,7 +58,6 @@ import org.apache.calcite.tools.FrameworkConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.hive.conf.HiveConf.ConfVars;
 import org.apache.hadoop.hive.metastore.Warehouse;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.metastore.api.MetaException;
@@ -212,10 +212,10 @@ public class HiveParserSemanticAnalyzer {
         prunedPartitions = new HashMap<>();
         unparseTranslator = new HiveParserUnparseTranslator(conf);
         autogenColAliasPrfxLbl =
-                HiveConf.getVar(conf, HiveConf.ConfVars.HIVE_AUTOGEN_COLUMNALIAS_PREFIX_LABEL);
+                HiveConf.getVar(conf, HiveConfVars.HIVE_AUTOGEN_COLUMNALIAS_PREFIX_LABEL);
         autogenColAliasPrfxIncludeFuncName =
                 HiveConf.getBoolVar(
-                        conf, HiveConf.ConfVars.HIVE_AUTOGEN_COLUMNALIAS_PREFIX_INCLUDEFUNCNAME);
+                        conf, HiveConfVars.HIVE_AUTOGEN_COLUMNALIAS_PREFIX_INCLUDEFUNCNAME);
         queryProperties = new QueryProperties();
         aliasToCTEs = new HashMap<>();
         globalLimitCtx = new GlobalLimitCtx();
@@ -540,7 +540,7 @@ public class HiveParserSemanticAnalyzer {
                                     (HiveParserASTNode) numerator,
                                     "Sampling percentage should be between 0 and 100"));
                 }
-                int seedNum = conf.getIntVar(ConfVars.HIVESAMPLERANDOMNUM);
+                int seedNum = conf.getIntVar(HiveConfVars.HIVE_SAMPLE_RANDOM_NUM);
                 sample = new SplitSample(percent, seedNum);
             } else if (type.getType() == HiveASTParser.TOK_ROWCOUNT) {
                 sample = new SplitSample(Integer.parseInt(value));
@@ -555,7 +555,7 @@ public class HiveParserSemanticAnalyzer {
                 } else if (last == 'g' || last == 'G') {
                     length <<= 30;
                 }
-                int seedNum = conf.getIntVar(ConfVars.HIVESAMPLERANDOMNUM);
+                int seedNum = conf.getIntVar(HiveConfVars.HIVE_SAMPLE_RANDOM_NUM);
                 sample = new SplitSample(length, seedNum);
             }
             String aliasId = getAliasId(alias, qb);
@@ -1120,8 +1120,8 @@ public class HiveParserSemanticAnalyzer {
                     qb.getParseInfo().setNoScanAnalyzeCommand(this.noscan);
                     qb.getParseInfo().setPartialScanAnalyzeCommand(this.partialscan);
                     // Allow analyze the whole table and dynamic partitions
-                    HiveConf.setVar(conf, HiveConf.ConfVars.DYNAMICPARTITIONINGMODE, "nonstrict");
-                    HiveConf.setVar(conf, HiveConf.ConfVars.HIVEMAPREDMODE, "nonstrict");
+                    HiveConf.setVar(conf, HiveConfVars.DYNAMIC_PARTITIONING_MODE, "nonstrict");
+                    HiveConf.setVar(conf, HiveConfVars.HIVE_MAPRED_MODE, "nonstrict");
 
                     break;
 
@@ -1642,7 +1642,7 @@ public class HiveParserSemanticAnalyzer {
                                             (CatalogTable) ts.table,
                                             ts.partHandle);
                         }
-                        if (HiveConf.getBoolVar(conf, HiveConf.ConfVars.HIVESTATSAUTOGATHER)) {
+                        if (HiveConf.getBoolVar(conf, HiveConfVars.HIVE_STATS_AUTOGATHER)) {
                             // Add the table spec for the destination table.
                             qb.getParseInfo()
                                     .addTableSpec(
@@ -1688,7 +1688,7 @@ public class HiveParserSemanticAnalyzer {
                                     }
                                 }
                                 if (HiveConf.getBoolVar(
-                                        conf, HiveConf.ConfVars.HIVESTATSAUTOGATHER)) {
+                                        conf, HiveConfVars.HIVE_STATS_AUTOGATHER)) {
                                     TableSpec ts =
                                             new TableSpec(
                                                     catalogRegistry,
@@ -1798,8 +1798,8 @@ public class HiveParserSemanticAnalyzer {
         // if HIVE_STATS_COLLECT_SCANCOLS is enabled, check.
         if ((!this.skipAuthorization()
                         && !qb.isInsideView()
-                        && HiveConf.getBoolVar(conf, HiveConf.ConfVars.HIVE_AUTHORIZATION_ENABLED))
-                || HiveConf.getBoolVar(conf, HiveConf.ConfVars.HIVE_STATS_COLLECT_SCANCOLS)) {
+                        && HiveConf.getBoolVar(conf, HiveConfVars.HIVE_AUTHORIZATION_ENABLED))
+                || HiveConf.getBoolVar(conf, HiveConfVars.HIVE_STATS_COLLECT_SCANCOLS)) {
             qb.rewriteViewToSubq(alias, viewName, qbexpr, catalogView);
         } else {
             qb.rewriteViewToSubq(alias, viewName, qbexpr, null);
