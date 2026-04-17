@@ -29,6 +29,7 @@ import org.apache.flink.table.catalog.ResolvedCatalogBaseTable;
 import org.apache.flink.table.catalog.ResolvedCatalogTable;
 import org.apache.flink.table.catalog.UnresolvedIdentifier;
 import org.apache.flink.table.catalog.hive.util.HiveTypeUtil;
+import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
 import org.apache.flink.table.planner.delegation.hive.HiveParserConstants;
 import org.apache.flink.table.planner.delegation.hive.HiveParserRexNodeConverter;
 import org.apache.flink.table.planner.delegation.hive.HiveParserTypeCheckProcFactory;
@@ -77,7 +78,7 @@ import org.apache.calcite.sql.type.SqlTypeUtil;
 import org.apache.calcite.tools.FrameworkConfig;
 import org.apache.calcite.util.ImmutableBitSet;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.hadoop.hive.common.ObjectPair;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.ErrorMsg;
@@ -1474,7 +1475,7 @@ public class HiveParserBaseSemanticAnalyzer {
 
     public static Map<String, Integer> buildHiveToCalciteColumnMap(HiveParserRowResolver rr) {
         Map<String, Integer> map = new HashMap<>();
-        for (ColumnInfo ci : rr.getRowSchema().getSignature()) {
+        for (ColumnInfo ci : HiveReflectionUtils.getRowSchemaSignature(rr.getRowSchema())) {
             map.put(ci.getInternalName(), rr.getPosition(ci.getInternalName()));
         }
         return Collections.unmodifiableMap(map);
@@ -1492,16 +1493,16 @@ public class HiveParserBaseSemanticAnalyzer {
     }
 
     public static boolean topLevelConjunctCheck(
-            HiveParserASTNode searchCond, ObjectPair<Boolean, Integer> subqInfo) {
+            HiveParserASTNode searchCond, MutablePair<Boolean, Integer> subqInfo) {
         if (searchCond.getType() == HiveASTParser.KW_OR) {
-            subqInfo.setFirst(Boolean.TRUE);
-            if (subqInfo.getSecond() > 1) {
+            subqInfo.setLeft(Boolean.TRUE);
+            if (subqInfo.getRight() > 1) {
                 return false;
             }
         }
         if (searchCond.getType() == HiveASTParser.TOK_SUBQUERY_EXPR) {
-            subqInfo.setSecond(subqInfo.getSecond() + 1);
-            return subqInfo.getSecond() <= 1 || !subqInfo.getFirst();
+            subqInfo.setRight(subqInfo.getRight() + 1);
+            return subqInfo.getRight() <= 1 || !subqInfo.getLeft();
         }
         for (int i = 0; i < searchCond.getChildCount(); i++) {
             boolean validSubQuery =

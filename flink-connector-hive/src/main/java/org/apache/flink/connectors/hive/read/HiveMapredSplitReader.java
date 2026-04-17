@@ -125,7 +125,7 @@ public class HiveMapredSplitReader implements SplitReader {
                     (Deserializer)
                             Class.forName(sd.getSerdeInfo().getSerializationLib()).newInstance();
             Configuration conf = new Configuration();
-            SerDeUtils.initializeSerDe(
+            hiveShim.initializeSerDe(
                     deserializer, conf, hiveTablePartition.getTableProps(), null);
             structObjectInspector = (StructObjectInspector) deserializer.getObjectInspector();
             structFields = structObjectInspector.getAllStructFieldRefs();

@@ -80,7 +80,6 @@ import org.apache.hadoop.hive.ql.parse.PTFInvocationSpec.PTFQueryInputType;
 import org.apache.hadoop.hive.ql.parse.PrunedPartitionList;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
 import org.apache.hadoop.hive.ql.parse.SplitSample;
-import org.apache.hadoop.hive.ql.plan.CreateViewDesc;
 import org.apache.hadoop.hive.ql.plan.ExprNodeColumnDesc;
 import org.apache.hadoop.hive.ql.plan.ExprNodeDesc;
 import org.apache.hadoop.hive.ql.plan.ExprNodeDescUtils;
@@ -150,7 +149,7 @@ public class HiveParserSemanticAnalyzer {
     private final HashMap<String, SplitSample> nameToSplitSample;
     Map<String, PrunedPartitionList> prunedPartitions;
     public List<FieldSchema> resultSchema;
-    protected CreateViewDesc createVwDesc;
+    protected Object createVwDesc;
     protected ArrayList<String> viewsExpanded;
     protected HiveParserASTNode viewSelect;
     public final HiveParserUnparseTranslator unparseTranslator;
@@ -1664,9 +1663,22 @@ public class HiveParserSemanticAnalyzer {
                                 Path location;
                                 // If the CTAS query does specify a location, use the table
                                 // location, else use the db location
-                                if (qb.getTableDesc() != null
-                                        && qb.getTableDesc().getLocation() != null) {
-                                    location = new Path(qb.getTableDesc().getLocation());
+                                // Note: getTableDesc() returns Object (Hive 4 relocated
+                                // CreateTableDesc). In practice it is always null in Flink's
+                                // usage since CTAS is handled differently.
+                                Object tableDesc = qb.getTableDesc();
+                                String ctasLocation = null;
+                                String ctasDbName = null;
+                                if (tableDesc != null) {
+                                    try {
+                                        ctasLocation = (String) tableDesc.getClass().getMethod("getLocation").invoke(tableDesc);
+                                        ctasDbName = (String) tableDesc.getClass().getMethod("getDatabaseName").invoke(tableDesc);
+                                    } catch (Exception e) {
+                                        throw new SemanticException("Failed to read CreateTableDesc", e);
+                                    }
+                                }
+                                if (ctasLocation != null) {
+                                    location = new Path(ctasLocation);
                                 } else {
                                     // allocate a temporary output dir on the location of the table
                                     String tableName =
@@ -1676,12 +1688,7 @@ public class HiveParserSemanticAnalyzer {
                                         Warehouse wh = new Warehouse(conf);
                                         // Use destination table's db location.
                                         String destTableDb =
-                                                qb.getTableDesc() != null
-                                                        ? qb.getTableDesc().getDatabaseName()
-                                                        : null;
-                                        if (destTableDb == null) {
-                                            destTableDb = names[0];
-                                        }
+                                                ctasDbName != null ? ctasDbName : names[0];
                                         location = wh.getDatabasePath(db.getDatabase(destTableDb));
                                     } catch (MetaException e) {
                                         throw new SemanticException(e);
