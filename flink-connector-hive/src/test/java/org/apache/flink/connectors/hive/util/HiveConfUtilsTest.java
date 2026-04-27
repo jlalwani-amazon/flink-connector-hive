@@ -19,7 +19,7 @@
 package org.apache.flink.connectors.hive.util;
 
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
