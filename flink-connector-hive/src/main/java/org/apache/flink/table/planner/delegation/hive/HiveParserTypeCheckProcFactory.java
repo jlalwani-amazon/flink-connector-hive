@@ -73,8 +73,8 @@ import org.apache.hadoop.hive.ql.plan.ExprNodeGenericFuncDesc;
 import org.apache.hadoop.hive.ql.udf.SettableUDF;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDF;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFBaseCompare;
+import org.apache.hadoop.hive.ql.udf.generic.GenericUDFCoalesce;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFInternalInterval;
-import org.apache.hadoop.hive.ql.udf.generic.GenericUDFNvl;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPAnd;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPDivide;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPEqual;
@@ -1215,10 +1215,10 @@ public class HiveParserTypeCheckProcFactory {
                     }
                     desc = ExprNodeGenericFuncDesc.newInstance(genericUDF, funcText, children);
                 } else if (ctx.isFoldExpr() && canConvertIntoNvl(genericUDF, children)) {
-                    // Rewrite CASE into NVL
+                    // Rewrite CASE into COALESCE
                     desc =
                             ExprNodeGenericFuncDesc.newInstance(
-                                    new GenericUDFNvl(),
+                                    new GenericUDFCoalesce(),
                                     new ArrayList<>(
                                             Arrays.asList(
                                                     children.get(0),
