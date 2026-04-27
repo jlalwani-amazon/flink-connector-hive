@@ -31,10 +31,8 @@ import org.apache.flink.util.CollectionUtil;
 
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentTypeException;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -45,12 +43,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /** Test for native hive agg function compatibility. */
 public class HiveDialectAggITCase {
 
-    @ClassRule public static TemporaryFolder tempFolder = new TemporaryFolder();
-
     private static HiveCatalog hiveCatalog;
     private static TableEnvironment tableEnv;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         // required by query like "src.`[k].*` from src"

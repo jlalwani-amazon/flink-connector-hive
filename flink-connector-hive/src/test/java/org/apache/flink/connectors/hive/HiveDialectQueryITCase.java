@@ -50,15 +50,15 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectIn
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorUtils;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.TimestampObjectInspector;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.ComparisonFailure;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.opentest4j.AssertionFailedError;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
@@ -77,7 +77,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /** Test hive query compatibility. */
 public class HiveDialectQueryITCase {
 
-    @ClassRule public static TemporaryFolder tempFolder = new TemporaryFolder();
+    @TempDir static Path tempFolder;
 
     private static final String QTEST_DIR =
             Thread.currentThread().getContextClassLoader().getResource("query-test").getPath();
@@ -87,7 +87,7 @@ public class HiveDialectQueryITCase {
     private static TableEnvironment tableEnv;
     private static String warehouse;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         // required by query like "src.`[k].*` from src"
@@ -897,13 +897,13 @@ public class HiveDialectQueryITCase {
                 String.format(
                         "create table m_catalog.db.t1(x int, y string) "
                                 + "with ('connector' = 'filesystem', 'path' = '%s', 'format'='csv')",
-                        tempFolder.newFolder().toURI()));
+                        Files.createTempDirectory(tempFolder, "t1").toUri()));
         // create a non-hive partitioned table
         tableEnv.executeSql(
                 String.format(
                         "create table m_catalog.db.t2(x int, p1 int,p2 string) partitioned by (p1, p2) "
                                 + "with ('connector' = 'filesystem', 'path' = '%s', 'format'='csv')",
-                        tempFolder.newFolder().toURI()));
+                        Files.createTempDirectory(tempFolder, "t2").toUri()));
 
         tableEnv.getConfig().setSqlDialect(SqlDialect.HIVE);
         // create a hive table
@@ -1010,7 +1010,7 @@ public class HiveDialectQueryITCase {
                 String actualResult = result.toString();
                 if (!actualResult.equals(expectedResult)) {
                     System.out.println();
-                    throw new ComparisonFailure(
+                    throw new AssertionFailedError(
                             "Query output diff for qtest " + qfile.getName(),
                             expectedResult,
                             actualResult);
