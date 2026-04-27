@@ -44,6 +44,9 @@ under the License.
 		<hive.hadoop.version>2.10.2</hive.hadoop.version>
 		<hiverunner.version>4.0.0</hiverunner.version>
 		<reflections.version>0.9.8</reflections.version>
+		<!-- Hive uses illegal reflective access (StringInternUtils, FunctionRegistry);
+		     required on Java 17+ until upstream Hive removes setAccessible calls. -->
+		<flink.surefire.baseArgLine>-XX:+UseG1GC -Xms256m --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens java.base/java.time=ALL-UNNAMED --add-exports java.security.jgss/sun.security.krb5=ALL-UNNAMED</flink.surefire.baseArgLine>
 	</properties>
 
 	<dependencyManagement>
@@ -273,7 +276,7 @@ under the License.
 
 		<dependency>
 			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-hadoop-compatibility_${scala.binary.version}</artifactId>
+			<artifactId>flink-hadoop-compatibility</artifactId>
 			<version>${flink.version}</version>
 		</dependency>
 
@@ -758,13 +761,7 @@ under the License.
 			<scope>test</scope>
 		</dependency>
 
-		<!--flink-java and flink-clients test dependencies used for HiveInputFormatTest-->
-		<dependency>
-			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-java</artifactId>
-			<version>${flink.version}</version>
-			<scope>test</scope>
-		</dependency>
+		<!--flink-clients test dependency used for HiveInputFormatTest-->
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-clients</artifactId>
@@ -1339,7 +1336,7 @@ under the License.
 									<include>org.apache.flink:flink-hadoop-fs</include>
 									<include>org.apache.flink:flink-orc</include>
 									<include>org.apache.flink:flink-orc-nohive</include>
-									<include>org.apache.flink:flink-hadoop-compatibility_${scala.binary.version}</include>
+									<include>org.apache.flink:flink-hadoop-compatibility</include>
 									<include>org.apache.flink:flink-parquet</include>
 									<include>org.apache.flink:flink-hadoop-bulk</include>
 									<include>org.apache.parquet:parquet-hadoop</include>
