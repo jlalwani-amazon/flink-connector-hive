@@ -48,7 +48,6 @@ import org.apache.flink.util.CollectionUtil;
 import org.apache.flink.util.TestLoggerExtension;
 
 import com.google.common.collect.Lists;
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -191,7 +190,9 @@ class HiveTableSinkITCase {
     void testPartStreamingWrite() throws Exception {
         testStreamingWrite(true, false, "parquet", this::checkSuccessFiles);
         // disable vector orc writer test for hive 2.x due to dependency conflict
-        if (!hiveCatalog.getHiveVersion().startsWith("2.")) {
+        // and hive 4.x due to ORC shim not supporting Hive 4 yet
+        if (!hiveCatalog.getHiveVersion().startsWith("2.")
+                && hiveCatalog.getHiveVersion().compareTo("4.0.0") < 0) {
             testStreamingWrite(true, false, "orc", this::checkSuccessFiles);
         }
     }
@@ -200,7 +201,9 @@ class HiveTableSinkITCase {
     void testNonPartStreamingWrite() throws Exception {
         testStreamingWrite(false, false, "parquet", (p) -> {});
         // disable vector orc writer test for hive 2.x due to dependency conflict
-        if (!hiveCatalog.getHiveVersion().startsWith("2.")) {
+        // and hive 4.x due to ORC shim not supporting Hive 4 yet
+        if (!hiveCatalog.getHiveVersion().startsWith("2.")
+                && hiveCatalog.getHiveVersion().compareTo("4.0.0") < 0) {
             testStreamingWrite(false, false, "orc", (p) -> {});
         }
     }
@@ -208,8 +211,9 @@ class HiveTableSinkITCase {
     @Test
     void testPartStreamingMrWrite() throws Exception {
         testStreamingWrite(true, true, "parquet", this::checkSuccessFiles);
-        // doesn't support writer 2.0 orc table
-        if (!hiveCatalog.getHiveVersion().startsWith("2.0")) {
+        // doesn't support writer 2.0 orc table or hive 4.x (ORC shim unsupported)
+        if (!hiveCatalog.getHiveVersion().startsWith("2.0")
+                && hiveCatalog.getHiveVersion().compareTo("4.0.0") < 0) {
             testStreamingWrite(true, true, "orc", this::checkSuccessFiles);
         }
     }
@@ -217,8 +221,9 @@ class HiveTableSinkITCase {
     @Test
     void testNonPartStreamingMrWrite() throws Exception {
         testStreamingWrite(false, true, "parquet", (p) -> {});
-        // doesn't support writer 2.0 orc table
-        if (!hiveCatalog.getHiveVersion().startsWith("2.0")) {
+        // doesn't support writer 2.0 orc table or hive 4.x (ORC shim unsupported)
+        if (!hiveCatalog.getHiveVersion().startsWith("2.0")
+                && hiveCatalog.getHiveVersion().compareTo("4.0.0") < 0) {
             testStreamingWrite(false, true, "orc", (p) -> {});
         }
     }
@@ -574,7 +579,7 @@ class HiveTableSinkITCase {
 
         String successFileName = tEnv.getConfig().get(SINK_PARTITION_COMMIT_SUCCESS_FILE_NAME);
         String warehouse =
-                hiveCatalog.getHiveConf().get(HiveConf.ConfVars.METASTOREWAREHOUSE.varname);
+                hiveCatalog.getHiveConf().get(HiveConfVars.METASTORE_WAREHOUSE.varname);
 
         tEnv.executeSql("CREATE TABLE zm_test_non_partition_table (name string)");
         tEnv.executeSql(
@@ -624,7 +629,7 @@ class HiveTableSinkITCase {
         TableEnvironment tEnv = HiveTestUtils.createTableEnvInBatchMode(SqlDialect.HIVE);
         tEnv.registerCatalog(hiveCatalog.getName(), hiveCatalog);
         tEnv.useCatalog(hiveCatalog.getName());
-        String wareHouse = hiveCatalog.getHiveConf().getVar(HiveConf.ConfVars.METASTOREWAREHOUSE);
+        String wareHouse = hiveCatalog.getHiveConf().getVar(HiveConfVars.METASTORE_WAREHOUSE);
         // disable auto statistic first
         tEnv.getConfig().set(HiveOptions.TABLE_EXEC_HIVE_SINK_STATISTIC_AUTO_GATHER_ENABLE, false);
         // test non-partition table
@@ -655,10 +660,16 @@ class HiveTableSinkITCase {
                         new CatalogTableStatistics(
                                 -1, 2, getPathSize(Paths.get(wareHouse, "t1")), -1));
         statistics = hiveCatalog.getTableStatistics(new ObjectPath("default", "t2"));
+        // Hive 4 reports different rawDataSize for ORC (16 vs 8)
+        long expectedOrcRawDataSize =
+                hiveCatalog.getHiveVersion().compareTo("4.0.0") >= 0 ? 16 : 8;
         assertThat(statistics)
                 .isEqualTo(
                         new CatalogTableStatistics(
-                                2, 2, getPathSize(Paths.get(wareHouse, "t2")), 8));
+                                2,
+                                2,
+                                getPathSize(Paths.get(wareHouse, "t2")),
+                                expectedOrcRawDataSize));
         statistics = hiveCatalog.getTableStatistics(new ObjectPath("default", "t3"));
         assertThat(statistics)
                 .isEqualTo(
@@ -689,7 +700,10 @@ class HiveTableSinkITCase {
         assertThat(statistics)
                 .isEqualTo(
                         new CatalogTableStatistics(
-                                1, 1, getPathSize(Paths.get(wareHouse, "pt2", "y=2")), 4));
+                                1,
+                                1,
+                                getPathSize(Paths.get(wareHouse, "pt2", "y=2")),
+                                expectedOrcRawDataSize / 2));
         statistics =
                 hiveCatalog.getPartitionStatistics(
                         new ObjectPath("default", "pt3"),
@@ -722,7 +736,10 @@ class HiveTableSinkITCase {
         assertThat(statistics)
                 .isEqualTo(
                         new CatalogTableStatistics(
-                                2, 2, getPathSize(Paths.get(wareHouse, "pt2", "y=2")), 8));
+                                2,
+                                2,
+                                getPathSize(Paths.get(wareHouse, "pt2", "y=2")),
+                                expectedOrcRawDataSize));
 
         statistics =
                 hiveCatalog.getPartitionStatistics(
