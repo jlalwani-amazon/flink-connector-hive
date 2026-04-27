@@ -37,8 +37,8 @@ import org.apache.hadoop.hive.ql.udf.generic.GenericUDFDecode;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFMapKeys;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFStringToMap;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFStruct;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -77,7 +77,7 @@ public class HiveGenericUDFTest {
 
     @Test
     public void testAddMonths() throws Exception {
-        Assume.assumeTrue(HIVE_230_OR_LATER);
+        Assumptions.assumeTrue(HIVE_230_OR_LATER);
         HiveGenericUDF udf =
                 init(
                         Class.forName("org.apache.hadoop.hive.ql.udf.generic.GenericUDFAddMonths"),
@@ -90,7 +90,7 @@ public class HiveGenericUDFTest {
 
     @Test
     public void testDateFormat() throws Exception {
-        Assume.assumeTrue(HIVE_310_OR_LATER);
+        Assumptions.assumeTrue(HIVE_310_OR_LATER);
         String constYear = "y";
         String constMonth = "M";
 
