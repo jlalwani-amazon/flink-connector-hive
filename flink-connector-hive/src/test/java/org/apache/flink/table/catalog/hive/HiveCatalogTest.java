@@ -39,10 +39,10 @@ import org.apache.flink.table.resource.ResourceUri;
 
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.api.Table;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,20 +70,20 @@ public class HiveCatalogTest {
     private static HiveCatalog hiveCatalog;
     private final ObjectPath tablePath = new ObjectPath("default", "test");
 
-    @BeforeClass
+    @BeforeAll
     public static void createCatalog() {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         hiveCatalog.open();
     }
 
-    @AfterClass
+    @AfterAll
     public static void closeCatalog() {
         if (hiveCatalog != null) {
             hiveCatalog.close();
         }
     }
 
-    @After
+    @AfterEach
     public void after() throws Exception {
         hiveCatalog.dropTable(tablePath, true);
     }

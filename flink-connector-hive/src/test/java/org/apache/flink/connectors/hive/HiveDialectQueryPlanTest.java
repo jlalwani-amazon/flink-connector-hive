@@ -27,9 +27,9 @@ import org.apache.flink.table.module.hive.HiveModule;
 import org.apache.flink.util.CollectionUtil;
 
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.flink.connectors.hive.HiveOptions.TABLE_EXEC_HIVE_NATIVE_AGG_FUNCTION_ENABLED;
 import static org.apache.flink.table.planner.utils.TableTestUtil.readFromResource;
@@ -41,7 +41,7 @@ public class HiveDialectQueryPlanTest {
     private static HiveCatalog hiveCatalog;
     private static TableEnvironment tableEnv;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         // required by query like "src.`[k].*` from src"
@@ -61,7 +61,7 @@ public class HiveDialectQueryPlanTest {
                 .commit();
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         // enable native hive agg function
         tableEnv.getConfig().set(TABLE_EXEC_HIVE_NATIVE_AGG_FUNCTION_ENABLED, true);

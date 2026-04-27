@@ -38,8 +38,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.security.Credentials;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.security.token.Token;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 
@@ -60,7 +60,7 @@ public class HiveDynamicTableFactoryTest {
     private static TableEnvironment tableEnv;
     private static HiveCatalog hiveCatalog;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         tableEnv = TableEnvironment.create(EnvironmentSettings.inStreamingMode());
         hiveCatalog = HiveTestUtils.createHiveCatalog();

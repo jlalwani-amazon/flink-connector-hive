@@ -42,9 +42,9 @@ import org.apache.flink.table.types.DataType;
 import org.apache.flink.types.Row;
 import org.apache.flink.util.CollectionUtil;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class HiveLookupJoinITCase {
     private static TableEnvironment tableEnv;
     private static HiveCatalog hiveCatalog;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         tableEnv = TableEnvironment.create(EnvironmentSettings.inStreamingMode());
         hiveCatalog = HiveTestUtils.createHiveCatalog();
@@ -445,7 +445,7 @@ public class HiveLookupJoinITCase {
         return lookupFunction;
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         tableEnv.executeSql("drop table bounded_table");
         tableEnv.executeSql("drop table bounded_partition_table");
