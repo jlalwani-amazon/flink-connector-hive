@@ -46,7 +46,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
-
 /**
  * Hive runner that uses local standalone HMS instead of embedded. Currently no test requires a
  * standalone HMS, but let's keep this around for a while just in case we need it in the future.
@@ -103,12 +102,20 @@ public class FlinkStandaloneHiveRunner extends FlinkEmbeddedHiveRunner {
         // set sys properties
         args.add(
                 hiveCmdLineConfig(
-                        HiveConfVars.METASTORE_WAREHOUSE.varname, outsideConf.getVar(HiveConfVars.METASTORE_WAREHOUSE)));
-        args.add(hiveCmdLineConfig(HiveConfVars.SCRATCH_DIR.varname, outsideConf.getVar(HiveConfVars.SCRATCH_DIR)));
-        args.add(hiveCmdLineConfig(HiveConfVars.LOCAL_SCRATCH_DIR.varname, outsideConf.getVar(HiveConfVars.LOCAL_SCRATCH_DIR)));
+                        HiveConfVars.METASTORE_WAREHOUSE.varname,
+                        outsideConf.getVar(HiveConfVars.METASTORE_WAREHOUSE)));
         args.add(
                 hiveCmdLineConfig(
-                        HiveConfVars.HIVE_HISTORY_FILE_LOC.varname, outsideConf.getVar(HiveConfVars.HIVE_HISTORY_FILE_LOC)));
+                        HiveConfVars.SCRATCH_DIR.varname,
+                        outsideConf.getVar(HiveConfVars.SCRATCH_DIR)));
+        args.add(
+                hiveCmdLineConfig(
+                        HiveConfVars.LOCAL_SCRATCH_DIR.varname,
+                        outsideConf.getVar(HiveConfVars.LOCAL_SCRATCH_DIR)));
+        args.add(
+                hiveCmdLineConfig(
+                        HiveConfVars.HIVE_HISTORY_FILE_LOC.varname,
+                        outsideConf.getVar(HiveConfVars.HIVE_HISTORY_FILE_LOC)));
         // The following config is removed in Hive 3.1.0.
         args.add(
                 hiveCmdLineConfig(

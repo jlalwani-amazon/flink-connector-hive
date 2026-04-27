@@ -18,8 +18,8 @@
 
 package org.apache.flink.table.planner.delegation.hive;
 
-import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.connectors.hive.FlinkHiveException;
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.table.catalog.CatalogRegistry;
 import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
 import org.apache.flink.util.FileUtils;

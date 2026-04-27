@@ -80,8 +80,11 @@ public class HiveRunnerITCase {
                     // catalog lock needs txn manager
                     // hive-3.x requires a proper txn manager to create ACID table
                     getHiveConfSystemOverride()
-                            .put(HiveConfVars.HIVE_TXN_MANAGER.varname, DbTxnManager.class.getName());
-                    getHiveConfSystemOverride().put(HiveConfVars.HIVE_SUPPORT_CONCURRENCY.varname, "true");
+                            .put(
+                                    HiveConfVars.HIVE_TXN_MANAGER.varname,
+                                    DbTxnManager.class.getName());
+                    getHiveConfSystemOverride()
+                            .put(HiveConfVars.HIVE_SUPPORT_CONCURRENCY.varname, "true");
                     // tell TxnHandler to prepare txn DB
                     getHiveConfSystemOverride().put(HiveConfVars.HIVE_IN_TEST.varname, "true");
                 }

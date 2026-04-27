@@ -135,7 +135,8 @@ public class HiveShimLoader {
             return (HiveShim) clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new CatalogException(
-                    "Failed to load HiveShim class " + className
+                    "Failed to load HiveShim class "
+                            + className
                             + ". Make sure flink-connector-hive-4.0.0 is on the classpath.",
                     e);
         }

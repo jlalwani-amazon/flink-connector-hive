@@ -24,6 +24,7 @@ import org.apache.flink.configuration.BatchExecutionOptions;
 import org.apache.flink.configuration.CoreOptions;
 import org.apache.flink.configuration.JobManagerOptions;
 import org.apache.flink.configuration.MemorySize;
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.connectors.hive.HiveOptions;
 import org.apache.flink.core.memory.DataOutputViewStreamWrapper;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -44,7 +45,6 @@ import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.utils.PartitionPathUtils;
 import org.apache.flink.util.Preconditions;
 import org.apache.flink.util.StringUtils;
-import org.apache.flink.connectors.hive.HiveConfVars;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;

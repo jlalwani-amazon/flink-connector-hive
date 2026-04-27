@@ -19,8 +19,8 @@
 package org.apache.flink.table.planner.delegation.hive.copy;
 
 import org.apache.flink.table.catalog.hive.client.HiveShim;
-import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
 import org.apache.flink.table.catalog.hive.client.HiveShimLoader;
+import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
 import org.apache.flink.table.planner.delegation.hive.HiveParserUtils;
 
 import org.apache.calcite.avatica.util.TimeUnit;
@@ -215,8 +215,14 @@ public class HiveParserTypeConverter {
     private static RelDataType convert(
             StructTypeInfo structType, final RelDataTypeFactory dtFactory)
             throws SemanticException {
-        List<RelDataType> fTypes = new ArrayList<>(HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion()).getStructFieldTypeInfos(structType).size());
-        for (TypeInfo ti : HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion()).getStructFieldTypeInfos(structType)) {
+        List<RelDataType> fTypes =
+                new ArrayList<>(
+                        HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
+                                .getStructFieldTypeInfos(structType)
+                                .size());
+        for (TypeInfo ti :
+                HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
+                        .getStructFieldTypeInfos(structType)) {
             fTypes.add(convert(ti, dtFactory));
         }
         return dtFactory.createStructType(

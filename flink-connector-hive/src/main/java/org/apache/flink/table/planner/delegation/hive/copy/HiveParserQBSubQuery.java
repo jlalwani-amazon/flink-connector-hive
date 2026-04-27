@@ -272,8 +272,7 @@ public class HiveParserQBSubQuery {
                 try {
                     cInfo = parentQueryRR.getExpression(expr);
                     if (cInfo != null) {
-                        return MutablePair.of(
-                                HiveParserQBSubQuery.ExprType.REFERS_PARENT, cInfo);
+                        return MutablePair.of(HiveParserQBSubQuery.ExprType.REFERS_PARENT, cInfo);
                     }
                 } catch (SemanticException se) {
                 }

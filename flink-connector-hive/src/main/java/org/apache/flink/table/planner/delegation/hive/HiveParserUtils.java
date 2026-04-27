@@ -18,8 +18,8 @@
 
 package org.apache.flink.table.planner.delegation.hive;
 
-import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.connectors.hive.FlinkHiveException;
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.table.catalog.hive.client.HiveMetastoreClientWrapper;
 import org.apache.flink.table.catalog.hive.client.HiveShim;
 import org.apache.flink.table.catalog.hive.client.HiveShimLoader;
@@ -237,7 +237,9 @@ public class HiveParserUtils {
                                 ((MapTypeInfo) typeInfo).getMapValueTypeInfo(), relTypeFactory);
                 return relTypeFactory.createMapType(keyType, valType);
             case STRUCT:
-                List<TypeInfo> types = HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion()).getStructFieldTypeInfos((StructTypeInfo) typeInfo);
+                List<TypeInfo> types =
+                        HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
+                                .getStructFieldTypeInfos((StructTypeInfo) typeInfo);
                 List<RelDataType> convertedTypes = new ArrayList<>(types.size());
                 for (TypeInfo type : types) {
                     convertedTypes.add(toRelDataType(type, relTypeFactory));

@@ -18,8 +18,8 @@
 
 package org.apache.flink.table.planner.delegation.hive;
 
-import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.table.calcite.bridge.CalciteContext;
 import org.apache.flink.table.catalog.CatalogRegistry;
 import org.apache.flink.table.catalog.CatalogTable;
@@ -27,8 +27,8 @@ import org.apache.flink.table.catalog.Column;
 import org.apache.flink.table.catalog.ObjectIdentifier;
 import org.apache.flink.table.catalog.ResolvedCatalogTable;
 import org.apache.flink.table.catalog.ResolvedSchema;
-import org.apache.flink.table.catalog.hive.util.HiveTypeUtil;
 import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
+import org.apache.flink.table.catalog.hive.util.HiveTypeUtil;
 import org.apache.flink.table.functions.hive.conversion.HiveInspectors;
 import org.apache.flink.table.planner.delegation.hive.copy.HiveASTParseDriver;
 import org.apache.flink.table.planner.delegation.hive.copy.HiveASTParseUtils;
@@ -61,7 +61,6 @@ import org.apache.flink.util.CollectionUtil;
 import org.apache.flink.util.Preconditions;
 
 import com.google.common.collect.ImmutableList;
-
 import org.apache.calcite.plan.RelOptCluster;
 import org.apache.calcite.plan.RelTraitSet;
 import org.apache.calcite.plan.ViewExpanders;
@@ -1549,7 +1548,8 @@ public class HiveParserCalcitePlanner {
                     throw new SemanticException(
                             "Duplicates detected when adding columns to RR: see previous message");
                 }
-                int vColPos = HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
+                int vColPos =
+                        HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
                 for (Pair<HiveParserASTNode, TypeInfo> astTypePair : vcASTAndType) {
                     addedProjectRR.putExpression(
                             astTypePair.getKey(),
@@ -1707,7 +1707,8 @@ public class HiveParserCalcitePlanner {
                     throw new SemanticException(
                             "Duplicates detected when adding columns to RR: see previous message");
                 }
-                int vcolPos = HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
+                int vcolPos =
+                        HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
                 for (Pair<HiveParserASTNode, TypeInfo> astTypePair : vcASTAndType) {
                     obSyntheticProjectRR.putExpression(
                             astTypePair.getKey(),
@@ -2666,7 +2667,8 @@ public class HiveParserCalcitePlanner {
                 i < correlRel.getRowType().getFieldCount();
                 i++) {
             projects.add(cluster.getRexBuilder().makeInputRef(correlRel, i));
-            ColumnInfo inputColInfo = HiveReflectionUtils.getRowSchemaSignature(correlRR.getRowSchema()).get(i);
+            ColumnInfo inputColInfo =
+                    HiveReflectionUtils.getRowSchemaSignature(correlRR.getRowSchema()).get(i);
             String colAlias = inputColInfo.getAlias();
             ColumnInfo colInfo =
                     new ColumnInfo(

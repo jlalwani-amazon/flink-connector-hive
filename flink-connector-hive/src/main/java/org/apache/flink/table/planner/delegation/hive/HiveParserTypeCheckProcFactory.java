@@ -72,8 +72,8 @@ import org.apache.hadoop.hive.ql.plan.ExprNodeGenericFuncDesc;
 import org.apache.hadoop.hive.ql.udf.SettableUDF;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDF;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFBaseCompare;
-import org.apache.hadoop.hive.ql.udf.generic.GenericUDFInternalInterval;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFCoalesce;
+import org.apache.hadoop.hive.ql.udf.generic.GenericUDFInternalInterval;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPAnd;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPDivide;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPEqual;
@@ -284,7 +284,8 @@ public class HiveParserTypeCheckProcFactory {
 
         // The dispatcher fires the processor corresponding to the closest matching
         // rule and passes the context along
-        Dispatcher disp = new HiveParserRuleDispatcher(tf.getDefaultExprProcessor(), opRules, tcCtx);
+        Dispatcher disp =
+                new HiveParserRuleDispatcher(tf.getDefaultExprProcessor(), opRules, tcCtx);
         GraphWalker ogw = new HiveParserExpressionWalker(disp);
 
         // Create a list of top nodes

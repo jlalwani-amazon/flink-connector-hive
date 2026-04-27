@@ -18,9 +18,9 @@
 
 package org.apache.flink.connectors.hive.write;
 
-import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.connectors.hive.CachedSerializedValue;
 import org.apache.flink.connectors.hive.FlinkHiveException;
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.connectors.hive.JobConfWrapper;
 import org.apache.flink.table.catalog.ResolvedSchema;
 import org.apache.flink.table.catalog.hive.client.HiveShim;
@@ -35,13 +35,11 @@ import org.apache.flink.util.Preconditions;
 import org.apache.flink.util.StringUtils;
 
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.api.SerDeInfo;
 import org.apache.hadoop.hive.ql.exec.FileSinkOperator.RecordWriter;
 import org.apache.hadoop.hive.ql.io.HiveOutputFormat;
 import org.apache.hadoop.hive.serde2.Deserializer;
 import org.apache.hadoop.hive.serde2.SerDeException;
-import org.apache.hadoop.hive.serde2.SerDeUtils;
 import org.apache.hadoop.hive.serde2.Serializer;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;

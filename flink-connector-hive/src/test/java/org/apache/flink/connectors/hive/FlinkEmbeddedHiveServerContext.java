@@ -33,8 +33,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
-
-
 /** HiveServerContext used by FlinkEmbeddedHiveRunner. */
 public class FlinkEmbeddedHiveServerContext implements HiveServerContext {
 
@@ -180,9 +178,11 @@ public class FlinkEmbeddedHiveServerContext implements HiveServerContext {
 
     private void configureFileSystem() {
 
-        createAndSetFolderProperty(HiveConfVars.METASTORE_WAREHOUSE, "warehouse", hiveConf, basedir);
+        createAndSetFolderProperty(
+                HiveConfVars.METASTORE_WAREHOUSE, "warehouse", hiveConf, basedir);
         createAndSetFolderProperty(HiveConfVars.SCRATCH_DIR, "scratchdir", hiveConf, basedir);
-        createAndSetFolderProperty(HiveConfVars.LOCAL_SCRATCH_DIR, "localscratchdir", hiveConf, basedir);
+        createAndSetFolderProperty(
+                HiveConfVars.LOCAL_SCRATCH_DIR, "localscratchdir", hiveConf, basedir);
         createAndSetFolderProperty(HiveConfVars.HIVE_HISTORY_FILE_LOC, "tmp", hiveConf, basedir);
 
         // HIVE_WAREHOUSE_SUBDIR_INHERIT_PERMS is removed from Hive 3.1.0

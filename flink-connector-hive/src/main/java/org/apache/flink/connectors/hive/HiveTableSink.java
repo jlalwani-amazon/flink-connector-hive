@@ -18,7 +18,6 @@
 
 package org.apache.flink.connectors.hive;
 
-import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.api.common.serialization.BulkWriter;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -280,8 +279,7 @@ public class HiveTableSink implements DynamicTableSink, SupportsPartitioning, Su
         try {
             Class hiveOutputFormatClz =
                     hiveShim.getHiveOutputFormatClass(Class.forName(sd.getOutputFormat()));
-            boolean isCompressed =
-                    jobConf.getBoolean(HiveConfVars.COMPRESS_RESULT.varname, false);
+            boolean isCompressed = jobConf.getBoolean(HiveConfVars.COMPRESS_RESULT.varname, false);
             HiveWriterFactory writerFactory =
                     new HiveWriterFactory(
                             jobConf,

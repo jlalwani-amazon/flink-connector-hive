@@ -18,7 +18,6 @@
 
 package org.apache.flink.connectors.hive;
 
-import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.connector.file.src.FileSourceSplit;
 import org.apache.flink.connector.file.src.enumerate.FileEnumerator;
@@ -29,7 +28,6 @@ import org.apache.flink.util.Preconditions;
 
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.api.StorageDescriptor;
 import org.apache.hadoop.mapred.FileSplit;
 import org.apache.hadoop.mapred.InputSplit;

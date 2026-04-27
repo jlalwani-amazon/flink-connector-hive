@@ -26,7 +26,6 @@ import org.apache.flink.table.module.CoreModule;
 import org.apache.flink.table.module.hive.HiveModule;
 import org.apache.flink.util.CollectionUtil;
 
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

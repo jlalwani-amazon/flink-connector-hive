@@ -590,7 +590,9 @@ public class HiveInspectors {
                         getObjectInspector(mapType.getMapValueTypeInfo()));
             case STRUCT:
                 StructTypeInfo structType = (StructTypeInfo) type;
-                List<TypeInfo> fieldTypes = HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion()).getStructFieldTypeInfos(structType);
+                List<TypeInfo> fieldTypes =
+                        HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
+                                .getStructFieldTypeInfos(structType);
 
                 List<ObjectInspector> fieldInspectors = new ArrayList<ObjectInspector>();
                 for (TypeInfo fieldType : fieldTypes) {

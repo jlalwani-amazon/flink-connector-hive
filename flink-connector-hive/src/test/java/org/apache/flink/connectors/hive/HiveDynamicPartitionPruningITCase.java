@@ -33,7 +33,6 @@ import org.apache.flink.types.Row;
 import org.apache.flink.util.CollectionUtil;
 import org.apache.flink.util.FileUtils;
 
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestTemplate;
@@ -75,8 +74,7 @@ public class HiveDynamicPartitionPruningITCase {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         hiveCatalog
                 .getHiveConf()
-                .setBoolVar(
-                        HiveConfVars.METASTORE_DISALLOW_INCOMPATIBLE_COL_TYPE_CHANGES, false);
+                .setBoolVar(HiveConfVars.METASTORE_DISALLOW_INCOMPATIBLE_COL_TYPE_CHANGES, false);
         hiveCatalog.open();
         warehouse = hiveCatalog.getHiveConf().getVar(HiveConfVars.METASTORE_WAREHOUSE);
 

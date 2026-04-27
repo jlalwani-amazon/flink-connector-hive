@@ -240,7 +240,8 @@ public class HiveMetastoreClientWrapper implements AutoCloseable {
     public Map<String, List<ColumnStatisticsObj>> getPartitionColumnStatistics(
             String dbName, String tableName, List<String> partNames, List<String> colNames)
             throws NoSuchObjectException, MetaException, TException {
-        return hiveShim.getPartitionColumnStatistics(client, dbName, tableName, partNames, colNames);
+        return hiveShim.getPartitionColumnStatistics(
+                client, dbName, tableName, partNames, colNames);
     }
 
     public boolean updateTableColumnStatistics(ColumnStatistics columnStatistics)

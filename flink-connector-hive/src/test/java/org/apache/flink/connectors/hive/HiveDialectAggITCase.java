@@ -29,7 +29,6 @@ import org.apache.flink.table.module.hive.HiveModule;
 import org.apache.flink.types.Row;
 import org.apache.flink.util.CollectionUtil;
 
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentTypeException;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
