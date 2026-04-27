@@ -44,7 +44,9 @@ class HivePartitionUtilsTest {
     void testHiveTablePartitionSerDe() throws Exception {
         String baseFilePath =
                 Objects.requireNonNull(this.getClass().getResource("/orc/test.orc")).getPath();
-        File wareHouse = Files.createDirectories(temporaryFolder.resolve("testHiveTablePartitionSerDe")).toFile();
+        File wareHouse =
+                Files.createDirectories(temporaryFolder.resolve("testHiveTablePartitionSerDe"))
+                        .toFile();
         int partitionNum = 10;
         List<HiveTablePartition> expectedHiveTablePartitions = new ArrayList<>();
         for (int i = 0; i < partitionNum; i++) {

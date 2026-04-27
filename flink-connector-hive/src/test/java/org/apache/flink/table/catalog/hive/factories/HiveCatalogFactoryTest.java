@@ -50,7 +50,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 /** Test for {@link HiveCatalog} created by {@link HiveCatalogFactory}. */
-public class HiveCatalogFactoryTest {
+class HiveCatalogFactoryTest {
 
     private static final URL CONF_DIR =
             Thread.currentThread().getContextClassLoader().getResource("test-catalog-factory-conf");
@@ -62,7 +62,7 @@ public class HiveCatalogFactoryTest {
     @TempDir Path tempFolder;
 
     @Test
-    public void testCreateHiveCatalog() {
+    void testCreateHiveCatalog() {
         final String catalogName = "mycatalog";
 
         final HiveCatalog expectedCatalog = HiveTestUtils.createHiveCatalog(catalogName, null);
@@ -84,7 +84,7 @@ public class HiveCatalogFactoryTest {
     }
 
     @Test
-    public void testCreateHiveCatalogWithHadoopConfDir() throws IOException {
+    void testCreateHiveCatalogWithHadoopConfDir() throws IOException {
         final String catalogName = "mycatalog";
 
         final String hadoopConfDir =
@@ -112,7 +112,7 @@ public class HiveCatalogFactoryTest {
     }
 
     @Test
-    public void testCreateHiveCatalogWithIllegalHadoopConfDir() throws IOException {
+    void testCreateHiveCatalogWithIllegalHadoopConfDir() throws IOException {
         final String catalogName = "mycatalog";
 
         final String hadoopConfDir =
@@ -133,7 +133,7 @@ public class HiveCatalogFactoryTest {
     }
 
     @Test
-    public void testLoadHadoopConfigFromEnv() throws IOException {
+    void testLoadHadoopConfigFromEnv() throws IOException {
         Map<String, String> customProps = new HashMap<>();
         String k1 = "what is connector?";
         String v1 = "Hive";
@@ -186,7 +186,7 @@ public class HiveCatalogFactoryTest {
     }
 
     @Test
-    public void testDisallowEmbedded() {
+    void testDisallowEmbedded() {
         final Map<String, String> options = new HashMap<>();
         options.put(CommonCatalogOptions.CATALOG_TYPE.key(), HiveCatalogFactoryOptions.IDENTIFIER);
 
@@ -201,7 +201,7 @@ public class HiveCatalogFactoryTest {
     }
 
     @Test
-    public void testCreateMultipleHiveCatalog() throws Exception {
+    void testCreateMultipleHiveCatalog() throws Exception {
         final Map<String, String> props1 = new HashMap<>();
         props1.put(CommonCatalogOptions.CATALOG_TYPE.key(), HiveCatalogFactoryOptions.IDENTIFIER);
         props1.put(

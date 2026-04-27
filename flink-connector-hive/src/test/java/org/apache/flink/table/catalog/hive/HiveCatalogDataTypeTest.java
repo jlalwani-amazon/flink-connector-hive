@@ -48,7 +48,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /** Test for data type mappings in HiveCatalog. */
-public class HiveCatalogDataTypeTest {
+class HiveCatalogDataTypeTest {
 
     private static HiveCatalog catalog;
 
@@ -62,13 +62,13 @@ public class HiveCatalogDataTypeTest {
     protected final ObjectPath path3 = new ObjectPath(db1, t2);
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         catalog = HiveTestUtils.createHiveCatalog();
         catalog.open();
     }
 
     @AfterEach
-    public void cleanup() throws Exception {
+    void cleanup() throws Exception {
         if (catalog.tableExists(path1)) {
             catalog.dropTable(path1, true);
         }
@@ -90,14 +90,14 @@ public class HiveCatalogDataTypeTest {
     }
 
     @AfterAll
-    public static void closeup() {
+    static void closeup() {
         if (catalog != null) {
             catalog.close();
         }
     }
 
     @Test
-    public void testDataTypes() throws Exception {
+    void testDataTypes() throws Exception {
         DataType[] types =
                 new DataType[] {
                     DataTypes.TINYINT(),
@@ -120,7 +120,7 @@ public class HiveCatalogDataTypeTest {
     }
 
     @Test
-    public void testNonSupportedBinaryDataTypes() throws Exception {
+    void testNonSupportedBinaryDataTypes() throws Exception {
         DataType[] types = new DataType[] {DataTypes.BINARY(BinaryType.MAX_LENGTH)};
 
         CatalogTable table = createCatalogTable(types);
@@ -132,7 +132,7 @@ public class HiveCatalogDataTypeTest {
     }
 
     @Test
-    public void testNonSupportedVarBinaryDataTypes() throws Exception {
+    void testNonSupportedVarBinaryDataTypes() throws Exception {
         DataType[] types = new DataType[] {DataTypes.VARBINARY(20)};
 
         CatalogTable table = createCatalogTable(types);
@@ -144,21 +144,21 @@ public class HiveCatalogDataTypeTest {
     }
 
     @Test
-    public void testCharTypeLength() throws Exception {
+    void testCharTypeLength() throws Exception {
         DataType[] types = new DataType[] {DataTypes.CHAR(HiveChar.MAX_CHAR_LENGTH + 1)};
 
         assertThatThrownBy(() -> verifyDataTypes(types)).isInstanceOf(CatalogException.class);
     }
 
     @Test
-    public void testVarCharTypeLength() throws Exception {
+    void testVarCharTypeLength() throws Exception {
         DataType[] types = new DataType[] {DataTypes.VARCHAR(HiveVarchar.MAX_VARCHAR_LENGTH + 1)};
 
         assertThatThrownBy(() -> verifyDataTypes(types)).isInstanceOf(CatalogException.class);
     }
 
     @Test
-    public void testComplexDataTypes() throws Exception {
+    void testComplexDataTypes() throws Exception {
         DataType[] types =
                 new DataType[] {
                     DataTypes.ARRAY(DataTypes.DOUBLE()),

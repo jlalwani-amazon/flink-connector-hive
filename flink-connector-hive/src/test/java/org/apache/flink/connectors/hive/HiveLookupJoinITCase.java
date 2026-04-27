@@ -61,13 +61,13 @@ import static org.apache.flink.connectors.hive.HiveOptions.STREAMING_SOURCE_PART
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** Test lookup join of hive tables. */
-public class HiveLookupJoinITCase {
+class HiveLookupJoinITCase {
 
     private static TableEnvironment tableEnv;
     private static HiveCatalog hiveCatalog;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         tableEnv = TableEnvironment.create(EnvironmentSettings.inStreamingMode());
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         tableEnv.registerCatalog(hiveCatalog.getName(), hiveCatalog);
@@ -162,7 +162,7 @@ public class HiveLookupJoinITCase {
     }
 
     @Test
-    public void testLookupOptions() throws Exception {
+    void testLookupOptions() throws Exception {
         FileSystemLookupFunction<HiveTablePartition> lookupFunction1 =
                 getLookupFunction("bounded_table");
         FileSystemLookupFunction<HiveTablePartition> lookupFunction2 =
@@ -176,7 +176,7 @@ public class HiveLookupJoinITCase {
     }
 
     @Test
-    public void testPartitionFetcherAndReader() throws Exception {
+    void testPartitionFetcherAndReader() throws Exception {
         // constructs test data using dynamic partition
         TableEnvironment batchEnv = HiveTestUtils.createTableEnvInBatchMode(SqlDialect.HIVE);
         batchEnv.registerCatalog(hiveCatalog.getName(), hiveCatalog);
@@ -227,7 +227,7 @@ public class HiveLookupJoinITCase {
     }
 
     @Test
-    public void testLookupJoinBoundedTable() throws Exception {
+    void testLookupJoinBoundedTable() throws Exception {
         tableEnv.getConfig().setSqlDialect(SqlDialect.DEFAULT);
         tableEnv.executeSql(
                         "insert into bounded_table values (1,'a',10),(2,'a',21),(2,'b',22),(3,'c',33)")
@@ -243,7 +243,7 @@ public class HiveLookupJoinITCase {
     }
 
     @Test
-    public void testLookupJoinBoundedPartitionedTable() throws Exception {
+    void testLookupJoinBoundedPartitionedTable() throws Exception {
         // constructs test data using dynamic partition
         TableEnvironment batchEnv = HiveTestUtils.createTableEnvInBatchMode(SqlDialect.HIVE);
         batchEnv.registerCatalog(hiveCatalog.getName(), hiveCatalog);
@@ -269,7 +269,7 @@ public class HiveLookupJoinITCase {
     }
 
     @Test
-    public void testLookupJoinPartitionedTable() throws Exception {
+    void testLookupJoinPartitionedTable() throws Exception {
         // constructs test data using dynamic partition
         TableEnvironment batchEnv = HiveTestUtils.createTableEnvInBatchMode(SqlDialect.HIVE);
         batchEnv.registerCatalog(hiveCatalog.getName(), hiveCatalog);
@@ -299,7 +299,7 @@ public class HiveLookupJoinITCase {
     }
 
     @Test
-    public void testLookupJoinPartitionedTableWithPartitionTime() throws Exception {
+    void testLookupJoinPartitionedTableWithPartitionTime() throws Exception {
         // constructs test data using dynamic partition
         TableEnvironment batchEnv = HiveTestUtils.createTableEnvInBatchMode(SqlDialect.HIVE);
         batchEnv.registerCatalog(hiveCatalog.getName(), hiveCatalog);
@@ -328,7 +328,7 @@ public class HiveLookupJoinITCase {
     }
 
     @Test
-    public void testLookupJoinPartitionedTableWithCreateTime() throws Exception {
+    void testLookupJoinPartitionedTableWithCreateTime() throws Exception {
         // constructs test data using dynamic partition
         TableEnvironment batchEnv = HiveTestUtils.createTableEnvInBatchMode(SqlDialect.HIVE);
         batchEnv.registerCatalog(hiveCatalog.getName(), hiveCatalog);
@@ -366,7 +366,7 @@ public class HiveLookupJoinITCase {
     }
 
     @Test
-    public void testLookupJoinWithLookUpSourceProjectPushDown() throws Exception {
+    void testLookupJoinWithLookUpSourceProjectPushDown() throws Exception {
         TableEnvironment batchEnv = HiveTestUtils.createTableEnvInBatchMode(SqlDialect.HIVE);
         batchEnv.registerCatalog(hiveCatalog.getName(), hiveCatalog);
         batchEnv.useCatalog(hiveCatalog.getName());
@@ -386,7 +386,7 @@ public class HiveLookupJoinITCase {
     }
 
     @Test
-    public void testLookupJoinTableWithColumnarStorage() throws Exception {
+    void testLookupJoinTableWithColumnarStorage() throws Exception {
         // constructs test data, as the DEFAULT_SIZE of VectorizedColumnBatch is 2048, we should
         // write as least 2048 records to the test table.
         List<Row> testData = new ArrayList<>(4096);
@@ -446,7 +446,7 @@ public class HiveLookupJoinITCase {
     }
 
     @AfterAll
-    public static void tearDown() {
+    static void tearDown() {
         tableEnv.executeSql("drop table bounded_table");
         tableEnv.executeSql("drop table bounded_partition_table");
         tableEnv.executeSql("drop table partition_table");

@@ -51,25 +51,25 @@ import static org.apache.flink.table.factories.FactoryUtil.CONNECTOR;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** IT case for {@link HiveSource}. */
-public class HiveSourceITCase {
+class HiveSourceITCase {
 
     private static HiveCatalog hiveCatalog;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         hiveCatalog.open();
     }
 
     @AfterAll
-    public static void tearDown() {
+    static void tearDown() {
         if (hiveCatalog != null) {
             hiveCatalog.close();
         }
     }
 
     @Test
-    public void testRegularRead() throws Exception {
+    void testRegularRead() throws Exception {
         // test non-partitioned table
         ObjectPath tablePath = new ObjectPath("default", "tbl1");
         Map<String, String> tableOptions = new HashMap<>();

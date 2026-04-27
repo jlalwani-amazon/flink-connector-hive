@@ -44,13 +44,13 @@ import java.util.Properties;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** Tests for HiveOutputFormatFactory. */
-public class HiveOutputFormatFactoryTest {
+class HiveOutputFormatFactoryTest {
 
     private static final String TEST_URI_SCHEME = "testscheme";
     private static final String TEST_URI_AUTHORITY = "test-uri-auth:8888";
 
     @Test
-    public void testCreateOutputFormat() {
+    void testCreateOutputFormat() {
         SerDeInfo serDeInfo =
                 new SerDeInfo("name", LazySimpleSerDe.class.getName(), Collections.emptyMap());
         HiveWriterFactory writerFactory =

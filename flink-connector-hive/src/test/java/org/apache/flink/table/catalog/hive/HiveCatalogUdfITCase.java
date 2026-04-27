@@ -74,7 +74,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * IT case for HiveCatalog. TODO: move to flink-connector-hive-test end-to-end test module once it's
  * setup
  */
-public class HiveCatalogUdfITCase extends AbstractTestBase {
+class HiveCatalogUdfITCase extends AbstractTestBase {
 
     @TempDir Path tempFolder;
 
@@ -84,20 +84,20 @@ public class HiveCatalogUdfITCase extends AbstractTestBase {
     private final String sinkTableName = "csv_sink";
 
     @BeforeAll
-    public static void createCatalog() {
+    static void createCatalog() {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         hiveCatalog.open();
     }
 
     @AfterAll
-    public static void closeCatalog() {
+    static void closeCatalog() {
         if (hiveCatalog != null) {
             hiveCatalog.close();
         }
     }
 
     @Test
-    public void testFlinkUdf() throws Exception {
+    void testFlinkUdf() throws Exception {
         final ResolvedSchema schema =
                 ResolvedSchema.of(
                         Column.physical("name", DataTypes.STRING()),
@@ -172,7 +172,10 @@ public class HiveCatalogUdfITCase extends AbstractTestBase {
 
         List<String> results;
         if (batch) {
-            Path p = Paths.get(Files.createDirectories(tempFolder.resolve("batch")).toString(), "test.csv");
+            Path p =
+                    Paths.get(
+                            Files.createDirectories(tempFolder.resolve("batch")).toString(),
+                            "test.csv");
 
             final ResolvedSchema sinkSchema =
                     ResolvedSchema.of(
@@ -237,7 +240,7 @@ public class HiveCatalogUdfITCase extends AbstractTestBase {
     }
 
     @Test
-    public void testTimestampUDF() throws Exception {
+    void testTimestampUDF() throws Exception {
 
         TableEnvironment tableEnv = HiveTestUtils.createTableEnvInBatchMode(SqlDialect.HIVE);
         tableEnv.registerCatalog(hiveCatalog.getName(), hiveCatalog);
@@ -264,7 +267,7 @@ public class HiveCatalogUdfITCase extends AbstractTestBase {
     }
 
     @Test
-    public void testDateUDF() throws Exception {
+    void testDateUDF() throws Exception {
 
         TableEnvironment tableEnv = HiveTestUtils.createTableEnvInBatchMode(SqlDialect.HIVE);
         tableEnv.registerCatalog(hiveCatalog.getName(), hiveCatalog);

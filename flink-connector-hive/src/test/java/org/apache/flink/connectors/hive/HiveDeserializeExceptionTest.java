@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * Sometimes users only add hive connector deps on client side but forget to add them on JM/TM. This
  * test is to make sure users get a clear message when that happens.
  */
-public class HiveDeserializeExceptionTest {
+class HiveDeserializeExceptionTest {
 
     static Stream<Arguments> parameters() {
         HiveWriterFactory writerFactory =
@@ -107,8 +107,7 @@ public class HiveDeserializeExceptionTest {
 
         return Stream.of(
                 Arguments.of(writerFactory, writerFactory.getClass().getSimpleName()),
-                Arguments.of(
-                        compactReaderFactory, compactReaderFactory.getClass().getSimpleName()),
+                Arguments.of(compactReaderFactory, compactReaderFactory.getClass().getSimpleName()),
                 Arguments.of(hiveSource, hiveSource.getClass().getSimpleName()));
     }
 

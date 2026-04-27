@@ -36,13 +36,13 @@ import static org.apache.flink.table.planner.utils.TableTestUtil.readFromResourc
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** Test hive query plan. */
-public class HiveDialectQueryPlanTest {
+class HiveDialectQueryPlanTest {
 
     private static HiveCatalog hiveCatalog;
     private static TableEnvironment tableEnv;
 
     @BeforeAll
-    public static void setup() throws Exception {
+    static void setup() throws Exception {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         // required by query like "src.`[k].*` from src"
         hiveCatalog.getHiveConf().setVar(HiveConf.ConfVars.HIVE_QUOTEDID_SUPPORT, "none");
@@ -62,13 +62,13 @@ public class HiveDialectQueryPlanTest {
     }
 
     @BeforeEach
-    public void before() {
+    void before() {
         // enable native hive agg function
         tableEnv.getConfig().set(TABLE_EXEC_HIVE_NATIVE_AGG_FUNCTION_ENABLED, true);
     }
 
     @Test
-    public void testSumAggFunctionPlan() {
+    void testSumAggFunctionPlan() {
         // test explain
         String sql = "select x, sum(y) from foo group by x";
         String actualPlan = explainSql(sql);
@@ -82,7 +82,7 @@ public class HiveDialectQueryPlanTest {
     }
 
     @Test
-    public void testCountAggFunctionPlan() {
+    void testCountAggFunctionPlan() {
         // test explain
         String sql = "select x, count(*), count(y), count(distinct y) from foo group by x";
         String actualPlan = explainSql(sql);
@@ -96,7 +96,7 @@ public class HiveDialectQueryPlanTest {
     }
 
     @Test
-    public void testAvgAggFunctionPlan() {
+    void testAvgAggFunctionPlan() {
         // test explain
         String sql = "select x, avg(y) from foo group by x";
         String actualPlan = explainSql(sql);
@@ -110,7 +110,7 @@ public class HiveDialectQueryPlanTest {
     }
 
     @Test
-    public void testMinAggFunctionPlan() {
+    void testMinAggFunctionPlan() {
         // test explain
         String sql = "select x, min(y) from foo group by x";
         String actualPlan = explainSql(sql);
@@ -124,7 +124,7 @@ public class HiveDialectQueryPlanTest {
     }
 
     @Test
-    public void testMaxAggFunctionPlan() {
+    void testMaxAggFunctionPlan() {
         // test explain
         String sql = "select x, max(y) from foo group by x";
         String actualPlan = explainSql(sql);

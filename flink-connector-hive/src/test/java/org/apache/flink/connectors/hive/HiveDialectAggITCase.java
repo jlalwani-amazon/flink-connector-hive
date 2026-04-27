@@ -41,13 +41,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /** Test for native hive agg function compatibility. */
-public class HiveDialectAggITCase {
+class HiveDialectAggITCase {
 
     private static HiveCatalog hiveCatalog;
     private static TableEnvironment tableEnv;
 
     @BeforeAll
-    public static void setup() throws Exception {
+    static void setup() throws Exception {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         // required by query like "src.`[k].*` from src"
         hiveCatalog.getHiveConf().setVar(HiveConf.ConfVars.HIVE_QUOTEDID_SUPPORT, "none");
@@ -70,7 +70,7 @@ public class HiveDialectAggITCase {
     }
 
     @Test
-    public void testSimpleSumAggFunction() throws Exception {
+    void testSimpleSumAggFunction() throws Exception {
         tableEnv.executeSql(
                 "create table test_sum(x string, y string, g string, z int, d decimal(10,5), e float, f double, ts timestamp)");
         tableEnv.executeSql(
@@ -140,7 +140,7 @@ public class HiveDialectAggITCase {
     }
 
     @Test
-    public void testSumDecimal() throws Exception {
+    void testSumDecimal() throws Exception {
         tableEnv.executeSql(
                 "create table test_sum_dec(a int, x string, z decimal(10, 5), g decimal(18, 5))");
         tableEnv.executeSql(
@@ -170,7 +170,7 @@ public class HiveDialectAggITCase {
     }
 
     @Test
-    public void testSumAggWithGroupKey() throws Exception {
+    void testSumAggWithGroupKey() throws Exception {
         tableEnv.executeSql(
                 "create table test_sum_group(name string, num bigint, price decimal(10,5))");
         tableEnv.executeSql(
@@ -190,7 +190,7 @@ public class HiveDialectAggITCase {
     }
 
     @Test
-    public void testSimpleCount() throws Exception {
+    void testSimpleCount() throws Exception {
         tableEnv.executeSql("create table test_count(a int, x string, y string, z int, d bigint)");
         tableEnv.executeSql(
                         "insert into test_count values (1, NULL, '2', 1, 2), "
@@ -234,7 +234,7 @@ public class HiveDialectAggITCase {
     }
 
     @Test
-    public void testCountAggWithGroupKey() throws Exception {
+    void testCountAggWithGroupKey() throws Exception {
         tableEnv.executeSql(
                 "create table test_count_group(a int, x string, y string, z int, d bigint)");
         tableEnv.executeSql(
@@ -253,7 +253,7 @@ public class HiveDialectAggITCase {
     }
 
     @Test
-    public void testAvgAggFunction() throws Exception {
+    void testAvgAggFunction() throws Exception {
         tableEnv.executeSql(
                 "create table test_avg(a int, x string, y string, z int, f bigint, d decimal(20, 5), d2 decimal(37, 20), e double, ts timestamp)");
         tableEnv.executeSql(
@@ -317,7 +317,7 @@ public class HiveDialectAggITCase {
     }
 
     @Test
-    public void testMinAggFunction() throws Exception {
+    void testMinAggFunction() throws Exception {
         tableEnv.executeSql(
                 "create table test_min(a int, b boolean, x string, y string, z int, d decimal(10,5), e float, f double, ts timestamp, dt date, bar binary)");
         tableEnv.executeSql(
@@ -422,7 +422,7 @@ public class HiveDialectAggITCase {
     }
 
     @Test
-    public void testMaxAggFunction() throws Exception {
+    void testMaxAggFunction() throws Exception {
         tableEnv.executeSql(
                 "create table test_max(a int, b boolean, x string, y string, z int, d decimal(10,5), e float, f double, ts timestamp, dt date, bar binary)");
         tableEnv.executeSql(

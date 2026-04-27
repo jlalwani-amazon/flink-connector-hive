@@ -75,7 +75,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /** Test hive query compatibility. */
-public class HiveDialectQueryITCase {
+class HiveDialectQueryITCase {
 
     @TempDir static Path tempFolder;
 
@@ -88,7 +88,7 @@ public class HiveDialectQueryITCase {
     private static String warehouse;
 
     @BeforeAll
-    public static void setup() throws Exception {
+    static void setup() throws Exception {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         // required by query like "src.`[k].*` from src"
         hiveCatalog.getHiveConf().setVar(HiveConf.ConfVars.HIVE_QUOTEDID_SUPPORT, "none");
@@ -173,7 +173,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testQueries() throws Exception {
+    void testQueries() throws Exception {
         File[] qfiles = new File(QTEST_DIR).listFiles();
         for (File qfile : qfiles) {
             runQFile(qfile);
@@ -181,7 +181,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testAdditionalQueries() throws Exception {
+    void testAdditionalQueries() throws Exception {
         List<String> toRun =
                 new ArrayList<>(
                         Arrays.asList(
@@ -206,7 +206,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testGroupingSets() throws Exception {
+    void testGroupingSets() throws Exception {
         List<String> results1 =
                 CollectionUtil.iteratorToList(
                                 tableEnv.executeSql(
@@ -283,7 +283,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testGroupingID() throws Exception {
+    void testGroupingID() throws Exception {
         tableEnv.executeSql("create table temp(x int,y int,z int)");
         try {
             tableEnv.executeSql("insert into temp values (1,2,3)").await();
@@ -329,7 +329,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testValues() throws Exception {
+    void testValues() throws Exception {
         tableEnv.executeSql(
                 "create table test_values("
                         + "t tinyint,s smallint,i int,b bigint,f float,d double,de decimal(10,5),ts timestamp,dt date,"
@@ -351,7 +351,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testJoinInvolvingComplexType() throws Exception {
+    void testJoinInvolvingComplexType() throws Exception {
         tableEnv.executeSql("CREATE TABLE test2a (a ARRAY<INT>)");
         tableEnv.executeSql("CREATE TABLE test2b (a INT)");
         try {
@@ -370,7 +370,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testWindowWithGrouping() throws Exception {
+    void testWindowWithGrouping() throws Exception {
         tableEnv.executeSql("create table t(category int, live int, comments int)");
         try {
             tableEnv.executeSql("insert into table t values (1, 0, 2), (2, 0, 2), (3, 0, 2)")
@@ -398,7 +398,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testCurrentDatabase() {
+    void testCurrentDatabase() {
         List<Row> result =
                 CollectionUtil.iteratorToList(
                         tableEnv.executeSql("select current_database()").collect());
@@ -415,7 +415,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testDistinctFrom() throws Exception {
+    void testDistinctFrom() throws Exception {
         try {
             tableEnv.executeSql("create table test(x string, y string)");
             tableEnv.executeSql(
@@ -434,7 +434,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testTableSample() throws Exception {
+    void testTableSample() throws Exception {
         tableEnv.executeSql("create table test_sample(a int)");
         try {
             tableEnv.executeSql("insert into test_sample values (2), (1), (3)").await();
@@ -471,7 +471,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testInsertDirectory() throws Exception {
+    void testInsertDirectory() throws Exception {
         String warehouse = hiveCatalog.getHiveConf().getVar(HiveConf.ConfVars.METASTOREWAREHOUSE);
 
         // test insert overwrite directory with row format parameters
@@ -535,7 +535,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testScriptTransform() throws Exception {
+    void testScriptTransform() throws Exception {
         tableEnv.executeSql("CREATE TABLE dest1(key INT, ten INT, one INT, value STRING)");
         tableEnv.executeSql("CREATE TABLE destp1 (key string) partitioned by (p1 int,p2 string)");
         try {
@@ -617,7 +617,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testMultiInsert() throws Exception {
+    void testMultiInsert() throws Exception {
         tableEnv.executeSql("create table t1 (id bigint, name string)");
         tableEnv.executeSql("create table t2 (id bigint, name string)");
         tableEnv.executeSql("create table t3 (id bigint, name string, age int)");
@@ -649,7 +649,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testNestType() throws Exception {
+    void testNestType() throws Exception {
         tableEnv.executeSql("CREATE TABLE dummy (i int)");
         tableEnv.executeSql("INSERT INTO TABLE dummy VALUES (42)").await();
         tableEnv.executeSql(
@@ -681,7 +681,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testWithOverWindow() throws Exception {
+    void testWithOverWindow() throws Exception {
         tableEnv.executeSql("create table over_test(a int, b int, c int, d int)");
         try {
             tableEnv.executeSql(
@@ -708,7 +708,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testLoadData() throws Exception {
+    void testLoadData() throws Exception {
         tableEnv.executeSql("create table tab1 (col1 int, col2 int) stored as orc");
         tableEnv.executeSql("create table tab2 (col1 int, col2 int) STORED AS ORC");
         tableEnv.executeSql(
@@ -776,7 +776,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testBoolComparison() throws Exception {
+    void testBoolComparison() throws Exception {
         tableEnv.executeSql("CREATE TABLE tbool (id int, a int, b string, c boolean)");
         try {
             tableEnv.executeSql("insert into tbool values (1, 1, '12', true), (2, 1, '0.4', false)")
@@ -794,7 +794,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testCastTimeStampToDecimal() throws Exception {
+    void testCastTimeStampToDecimal() throws Exception {
         try {
             String timestamp = "2012-12-19 11:12:19.1234567";
             // timestamp's behavior is different between hive2 and hive3, so
@@ -838,7 +838,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testCount() throws Exception {
+    void testCount() throws Exception {
         tableEnv.executeSql("create table abcd (a int, b int, c int, d int)");
         tableEnv.executeSql(
                         "insert into abcd values (null,35,23,6), (10, 100, 23, 5), (10, 35, 23, 5)")
@@ -860,7 +860,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testLiteral() throws Exception {
+    void testLiteral() throws Exception {
         List<Row> result =
                 CollectionUtil.iteratorToList(
                         tableEnv.executeSql("SELECT asin(2), binary('1'), struct(2, 9, 7)")
@@ -887,7 +887,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testCrossCatalogQueryNoHiveTable() throws Exception {
+    void testCrossCatalogQueryNoHiveTable() throws Exception {
         // register a new in-memory catalog
         Catalog inMemoryCatalog = new GenericInMemoryCatalog("m_catalog", "db");
         tableEnv.registerCatalog("m_catalog", inMemoryCatalog);
@@ -946,7 +946,7 @@ public class HiveDialectQueryITCase {
     }
 
     @Test
-    public void testNullLiteralAsArgument() throws Exception {
+    void testNullLiteralAsArgument() throws Exception {
         tableEnv.executeSql("create table test_ts(ts timestamp)");
         tableEnv.executeSql("create table t_bigint(ts bigint)");
         tableEnv.executeSql("create table t_array(a_t array<bigint>)");

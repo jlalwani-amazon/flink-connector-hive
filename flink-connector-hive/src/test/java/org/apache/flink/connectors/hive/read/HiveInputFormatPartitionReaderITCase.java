@@ -40,10 +40,10 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** Test for HiveInputFormatPartitionReader. */
-public class HiveInputFormatPartitionReaderITCase {
+class HiveInputFormatPartitionReaderITCase {
 
     @Test
-    public void testReadMultipleSplits() throws Exception {
+    void testReadMultipleSplits() throws Exception {
         HiveCatalog hiveCatalog = HiveTestUtils.createHiveCatalog();
         TableEnvironment tableEnv = HiveTestUtils.createTableEnvInBatchMode(SqlDialect.HIVE);
         tableEnv.registerCatalog(hiveCatalog.getName(), hiveCatalog);

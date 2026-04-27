@@ -28,9 +28,9 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** Test for {@link HiveModuleFactory}. */
-public class HiveModuleFactoryTest {
+class HiveModuleFactoryTest {
     @Test
-    public void test() {
+    void test() {
         final HiveModule expected = new HiveModule();
 
         final Module actualModule =

@@ -767,7 +767,10 @@ class HiveDialectITCase {
         String udfCode = String.format(udfCodeTemplate, udfClass);
         File jarFile =
                 UserClassLoaderJarTestUtils.createJarFile(
-                        Files.createDirectories(tempFolder.resolve("test-jar")).toFile(), "test-udf.jar", udfClass, udfCode);
+                        Files.createDirectories(tempFolder.resolve("test-jar")).toFile(),
+                        "test-udf.jar",
+                        udfClass,
+                        udfCode);
         // test create function using jar
         tableEnv.executeSql(
                 String.format(
@@ -785,7 +788,10 @@ class HiveDialectITCase {
         udfCode = String.format(udfCodeTemplate, udfClass);
         jarFile =
                 UserClassLoaderJarTestUtils.createJarFile(
-                        Files.createDirectories(tempFolder.resolve("test-jar-1")).toFile(), "test-udf-1.jar", udfClass, udfCode);
+                        Files.createDirectories(tempFolder.resolve("test-jar-1")).toFile(),
+                        "test-udf-1.jar",
+                        udfClass,
+                        udfCode);
         tableEnv.executeSql(
                 String.format(
                         "create temporary function t_add_one as '%s' using jar '%s'",

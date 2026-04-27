@@ -36,13 +36,13 @@ import static org.apache.flink.table.expressions.ApiExpressionUtils.valueLiteral
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** Tests for HiveTableUtil. */
-public class HiveTableUtilTest {
+class HiveTableUtilTest {
 
     private static final HiveShim hiveShim =
             HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion());
 
     @Test
-    public void testMakePartitionFilter() {
+    void testMakePartitionFilter() {
         List<String> partColNames = Arrays.asList("p1", "p2", "p3");
         ResolvedExpression p1Ref = new FieldReferenceExpression("p1", DataTypes.INT(), 0, 2);
         ResolvedExpression p2Ref = new FieldReferenceExpression("p2", DataTypes.STRING(), 0, 3);
