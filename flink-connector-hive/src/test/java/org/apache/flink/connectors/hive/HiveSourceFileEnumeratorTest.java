@@ -25,9 +25,8 @@ import org.apache.hadoop.hive.metastore.api.StorageDescriptor;
 import org.apache.hadoop.hive.ql.io.orc.OrcInputFormat;
 import org.apache.hadoop.hive.ql.io.orc.OrcSerde;
 import org.apache.hadoop.mapred.JobConf;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -42,16 +41,16 @@ import java.util.Properties;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** Test for {@link HiveSourceFileEnumerator} . */
-public class HiveSourceFileEnumeratorTest {
+class HiveSourceFileEnumeratorTest {
 
-    @Rule public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir private Path temporaryFolder;
 
     @Test
-    public void testCalculateFilesSize() throws Exception {
+    void testCalculateFilesSize() throws Exception {
         String baseFilePath =
                 Objects.requireNonNull(this.getClass().getResource("/orc/test.orc")).getPath();
         long fileSize = Paths.get(baseFilePath).toFile().length();
-        File wareHouse = temporaryFolder.newFolder("testCalculateFilesSize");
+        File wareHouse = Files.createDirectories(temporaryFolder.resolve("testCalculateFilesSize")).toFile();
         int partitionNum = 10;
         long openCost = 1;
         List<HiveTablePartition> hiveTablePartitions = new ArrayList<>();
@@ -83,12 +82,12 @@ public class HiveSourceFileEnumeratorTest {
     }
 
     @Test
-    public void testCreateInputSplits() throws Exception {
+    void testCreateInputSplits() throws Exception {
         int numSplits = 1000;
         // create a jobConf with default configuration
         JobConf jobConf = new JobConf();
         jobConf.set(HiveOptions.TABLE_EXEC_HIVE_CALCULATE_PARTITION_SIZE_THREAD_NUM.key(), "1");
-        File wareHouse = temporaryFolder.newFolder("testCreateInputSplits");
+        File wareHouse = Files.createDirectories(temporaryFolder.resolve("testCreateInputSplits")).toFile();
         // init the files for the partition
         StorageDescriptor sd = new StorageDescriptor();
         // set orc format

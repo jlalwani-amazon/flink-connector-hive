@@ -48,11 +48,10 @@ import org.apache.flink.util.CollectionUtil;
 import org.apache.flink.util.FileUtils;
 
 import com.google.common.collect.Lists;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -89,20 +88,20 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class HiveCatalogITCase {
 
-    @Rule public TemporaryFolder tempFolder = new TemporaryFolder();
+    @TempDir Path tempFolder;
 
     private static HiveCatalog hiveCatalog;
 
     private String sourceTableName = "csv_source";
     private String sinkTableName = "csv_sink";
 
-    @BeforeClass
+    @BeforeAll
     public static void createCatalog() {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         hiveCatalog.open();
     }
 
-    @AfterClass
+    @AfterAll
     public static void closeCatalog() {
         if (hiveCatalog != null) {
             hiveCatalog.close();
@@ -179,7 +178,7 @@ public class HiveCatalogITCase {
                                 sourceOptions),
                         resolvedSchema);
 
-        Path p = Paths.get(tempFolder.newFolder().getAbsolutePath(), "test.csv");
+        Path p = Paths.get(Files.createDirectories(tempFolder.resolve("csvApi")).toString(), "test.csv");
 
         final Map<String, String> sinkOptions = new HashMap<>();
         sinkOptions.put("connector.type", "filesystem");
@@ -250,7 +249,7 @@ public class HiveCatalogITCase {
                                 "WITH ('connector.type' = 'filesystem','connector.path' = 'file://%s','format.type' = 'csv')",
                                 srcPath));
 
-        String sinkPath = new File(tempFolder.newFolder(), "csv-order-sink").toURI().toString();
+        String sinkPath = new File(Files.createDirectories(tempFolder.resolve("csvSink")).toFile(), "csv-order-sink").toURI().toString();
 
         tableEnv.executeSql(
                 "CREATE TABLE sink ("
