@@ -1479,7 +1479,7 @@ under the License.
 				<!-- HiveShimV400 is loaded by reflection at runtime -->
 				<dependency>
 					<groupId>org.apache.flink</groupId>
-					<artifactId>flink-connector-hive-4.0.0</artifactId>
+					<artifactId>flink-connector-hive-4.0.0_${scala.binary.version}</artifactId>
 					<version>${project.version}</version>
 					<scope>runtime</scope>
 					<exclusions>
@@ -1488,6 +1488,17 @@ under the License.
 							<artifactId>*</artifactId>
 						</exclusion>
 					</exclusions>
+				</dependency>
+				<!--
+					hive-exec 4.x bundles ANTLR 3.5.2 unshaded. The default classpath has
+					antlr-runtime 3.3 which is binary-incompatible (CommonTree.insertChild).
+					Override to 3.5.2 so the standalone jar and bundled classes agree.
+				-->
+				<dependency>
+					<groupId>org.antlr</groupId>
+					<artifactId>antlr-runtime</artifactId>
+					<version>3.5.2</version>
+					<scope>test</scope>
 				</dependency>
 			</dependencies>
 		</profile>

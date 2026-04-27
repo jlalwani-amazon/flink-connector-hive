@@ -18,8 +18,8 @@
 
 package org.apache.flink.table.planner.delegation.hive.copy;
 
-import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.table.catalog.CatalogPartitionSpec;
 import org.apache.flink.table.catalog.CatalogRegistry;
 import org.apache.flink.table.catalog.CatalogTable;
@@ -28,8 +28,9 @@ import org.apache.flink.table.catalog.ObjectIdentifier;
 import org.apache.flink.table.catalog.ResolvedCatalogBaseTable;
 import org.apache.flink.table.catalog.ResolvedCatalogTable;
 import org.apache.flink.table.catalog.UnresolvedIdentifier;
-import org.apache.flink.table.catalog.hive.util.HiveTypeUtil;
+import org.apache.flink.table.catalog.hive.client.HiveShimLoader;
 import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
+import org.apache.flink.table.catalog.hive.util.HiveTypeUtil;
 import org.apache.flink.table.planner.delegation.hive.HiveParserConstants;
 import org.apache.flink.table.planner.delegation.hive.HiveParserRexNodeConverter;
 import org.apache.flink.table.planner.delegation.hive.HiveParserTypeCheckProcFactory;
@@ -77,8 +78,8 @@ import org.apache.calcite.sql.type.SqlTypeName;
 import org.apache.calcite.sql.type.SqlTypeUtil;
 import org.apache.calcite.tools.FrameworkConfig;
 import org.apache.calcite.util.ImmutableBitSet;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.ErrorMsg;
@@ -1752,8 +1753,12 @@ public class HiveParserBaseSemanticAnalyzer {
                     ArrayList<ObjectInspector> originalParameterTypeInfos =
                             HiveParserUtils.getWritableObjectInspector(aggParameters);
                     genericUDAFEvaluator =
-                            FunctionRegistry.getGenericWindowingEvaluator(
-                                    aggName, originalParameterTypeInfos, isDistinct, isAllColumns);
+                            HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
+                                    .getGenericWindowingEvaluator(
+                                            aggName,
+                                            originalParameterTypeInfos,
+                                            isDistinct,
+                                            isAllColumns);
                     HiveParserBaseSemanticAnalyzer.GenericUDAFInfo udaf =
                             HiveParserUtils.getGenericUDAFInfo(
                                     genericUDAFEvaluator, amode, aggParameters);

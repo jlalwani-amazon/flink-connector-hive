@@ -18,8 +18,8 @@
 
 package org.apache.flink.table.planner.delegation.hive.copy;
 
-import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.api.Schema;
 import org.apache.flink.table.catalog.CatalogBaseTable;

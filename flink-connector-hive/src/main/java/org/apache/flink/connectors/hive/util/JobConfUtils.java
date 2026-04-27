@@ -18,12 +18,11 @@
 
 package org.apache.flink.connectors.hive.util;
 
-import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.api.java.hadoop.common.HadoopInputFormatCommonBase;
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.connectors.hive.JobConfWrapper;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.security.Credentials;
 import org.apache.hadoop.security.UserGroupInformation;

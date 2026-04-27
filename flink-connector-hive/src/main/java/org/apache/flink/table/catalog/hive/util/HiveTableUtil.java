@@ -18,10 +18,10 @@
 
 package org.apache.flink.table.catalog.hive.util;
 
-import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.connectors.hive.FlinkHiveException;
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.api.constraints.UniqueConstraint;
 import org.apache.flink.table.catalog.CatalogPropertiesUtil;

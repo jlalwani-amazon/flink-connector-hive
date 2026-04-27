@@ -18,8 +18,8 @@
 
 package org.apache.flink.table.planner.delegation.hive.copy;
 
-import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.connectors.hive.FlinkHiveException;
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.table.api.TableConfig;
 
 import org.apache.hadoop.hive.conf.HiveConf;

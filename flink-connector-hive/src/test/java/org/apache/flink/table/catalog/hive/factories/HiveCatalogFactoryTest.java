@@ -18,6 +18,7 @@
 
 package org.apache.flink.table.catalog.hive.factories;
 
+import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.core.testutils.CommonTestUtils;
 import org.apache.flink.table.api.ValidationException;
 import org.apache.flink.table.catalog.Catalog;
@@ -27,7 +28,6 @@ import org.apache.flink.table.catalog.hive.HiveTestUtils;
 import org.apache.flink.table.factories.FactoryUtil;
 import org.apache.flink.testutils.executor.TestExecutorResource;
 import org.apache.flink.util.TestLogger;
-import org.apache.flink.connectors.hive.HiveConfVars;
 
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.junit.ClassRule;
