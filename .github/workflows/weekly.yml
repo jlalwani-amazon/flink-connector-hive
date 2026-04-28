@@ -40,6 +40,12 @@ jobs:
           - jdk: 17
             flink: 2.0.0
             mvn_profile: "hive3,skipE2ETests"
+          - jdk: 11
+            flink: 2.0.0
+            mvn_profile: hive4
+          - jdk: 11
+            flink: 2.0.0
+            mvn_profile: "hive4,skipE2ETests"
 
     uses: apache/flink-connector-shared-utils/.github/workflows/ci.yml@ci_utils
     with:

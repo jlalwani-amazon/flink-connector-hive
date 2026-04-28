@@ -33,6 +33,9 @@ jobs:
         # empty means test against hive2
         mvn_profile: [ "", hive3 ]
         include:
+          - jdk: 11
+            flink: 2.0.0
+            mvn_profile: hive4
           - jdk: 17
             flink: 2.0.0
             mvn_profile: ""
