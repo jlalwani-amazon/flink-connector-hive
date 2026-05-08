@@ -1308,6 +1308,10 @@ under the License.
 					<systemPropertyVariables>
 						<derby.stream.error.file>${project.build.directory}/derby.log</derby.stream.error.file>
 					</systemPropertyVariables>
+					<!-- FLINK-31351: flaky test, fix was not backported to externalized connector -->
+					<excludes>
+						<exclude>**/HiveServer2EndpointITCase.java</exclude>
+					</excludes>
 					<!-- todo: remove it after FLINK-32286 -->
 					<classpathDependencyExcludes>
 						<!-- Exclude calcite-related dependency to avoid it conflicts with the classes packed in flink-table-planner.
