@@ -18,15 +18,12 @@
 
 package org.apache.flink.table.catalog.hive.client;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.connectors.hive.FlinkHiveException;
 import org.apache.flink.table.api.constraints.UniqueConstraint;
 import org.apache.flink.table.catalog.hive.HiveCatalog;
 import org.apache.flink.util.Preconditions;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
@@ -57,6 +54,11 @@ import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Wrapper class for Hive Metastore Client, which embeds a HiveShim layer to handle different Hive
@@ -238,8 +240,7 @@ public class HiveMetastoreClientWrapper implements AutoCloseable {
     public Map<String, List<ColumnStatisticsObj>> getPartitionColumnStatistics(
             String dbName, String tableName, List<String> partNames, List<String> colNames)
             throws NoSuchObjectException, MetaException, TException {
-        return hiveShim.getPartitionColumnStatistics(
-                client, dbName, tableName, partNames, colNames);
+        return hiveShim.getPartitionColumnStatistics(client, dbName, tableName, partNames, colNames);
     }
 
     public boolean updateTableColumnStatistics(ColumnStatistics columnStatistics)

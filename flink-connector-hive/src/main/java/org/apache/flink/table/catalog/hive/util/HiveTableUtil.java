@@ -18,34 +18,6 @@
 
 package org.apache.flink.table.catalog.hive.util;
 
-import static org.apache.flink.table.catalog.CatalogPropertiesUtil.FLINK_PROPERTY_PREFIX;
-import static org.apache.flink.table.catalog.CatalogPropertiesUtil.IS_GENERIC;
-import static org.apache.flink.table.catalog.hive.util.Constants.ALTER_TABLE_OP;
-import static org.apache.flink.table.catalog.hive.util.Constants.COLLECTION_DELIM;
-import static org.apache.flink.table.catalog.hive.util.Constants.SERDE_INFO_PROP_PREFIX;
-import static org.apache.flink.table.catalog.hive.util.Constants.SERDE_LIB_CLASS_NAME;
-import static org.apache.flink.table.catalog.hive.util.Constants.STORED_AS_FILE_FORMAT;
-import static org.apache.flink.table.catalog.hive.util.Constants.STORED_AS_INPUT_FORMAT;
-import static org.apache.flink.table.catalog.hive.util.Constants.STORED_AS_OUTPUT_FORMAT;
-import static org.apache.flink.table.catalog.hive.util.Constants.TABLE_IS_EXTERNAL;
-import static org.apache.flink.table.catalog.hive.util.Constants.TABLE_LOCATION_URI;
-import static org.apache.flink.table.descriptors.ConnectorDescriptorValidator.CONNECTOR_TYPE;
-import static org.apache.flink.table.factories.FactoryUtil.CONNECTOR;
-import static org.apache.flink.util.Preconditions.checkArgument;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-import javax.annotation.Nullable;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.connectors.hive.FlinkHiveException;
@@ -78,6 +50,7 @@ import org.apache.flink.table.functions.hive.conversion.HiveInspectors;
 import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.types.logical.LogicalTypeFamily;
 import org.apache.flink.table.types.logical.LogicalTypeRoot;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
@@ -92,6 +65,36 @@ import org.apache.hadoop.hive.ql.io.StorageFormatFactory;
 import org.apache.hadoop.hive.serde.serdeConstants;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoUtils;
+
+import javax.annotation.Nullable;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static org.apache.flink.table.catalog.CatalogPropertiesUtil.FLINK_PROPERTY_PREFIX;
+import static org.apache.flink.table.catalog.CatalogPropertiesUtil.IS_GENERIC;
+import static org.apache.flink.table.catalog.hive.util.Constants.ALTER_TABLE_OP;
+import static org.apache.flink.table.catalog.hive.util.Constants.COLLECTION_DELIM;
+import static org.apache.flink.table.catalog.hive.util.Constants.SERDE_INFO_PROP_PREFIX;
+import static org.apache.flink.table.catalog.hive.util.Constants.SERDE_LIB_CLASS_NAME;
+import static org.apache.flink.table.catalog.hive.util.Constants.STORED_AS_FILE_FORMAT;
+import static org.apache.flink.table.catalog.hive.util.Constants.STORED_AS_INPUT_FORMAT;
+import static org.apache.flink.table.catalog.hive.util.Constants.STORED_AS_OUTPUT_FORMAT;
+import static org.apache.flink.table.catalog.hive.util.Constants.TABLE_IS_EXTERNAL;
+import static org.apache.flink.table.catalog.hive.util.Constants.TABLE_LOCATION_URI;
+import static org.apache.flink.table.descriptors.ConnectorDescriptorValidator.CONNECTOR_TYPE;
+import static org.apache.flink.table.factories.FactoryUtil.CONNECTOR;
+import static org.apache.flink.util.Preconditions.checkArgument;
 
 /** Utils to for Hive-backed table. */
 public class HiveTableUtil {

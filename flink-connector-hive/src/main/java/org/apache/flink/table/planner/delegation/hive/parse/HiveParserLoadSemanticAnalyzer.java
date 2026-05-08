@@ -18,20 +18,6 @@
 
 package org.apache.flink.table.planner.delegation.hive.parse;
 
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.stripQuotes;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import org.antlr.runtime.tree.Tree;
-import org.apache.calcite.plan.RelOptCluster;
-import org.apache.calcite.tools.FrameworkConfig;
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.net.URLCodec;
 import org.apache.flink.connectors.hive.FlinkHiveException;
 import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.table.catalog.CatalogRegistry;
@@ -43,6 +29,12 @@ import org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanti
 import org.apache.flink.table.planner.delegation.hive.operations.HiveExecutableOperation;
 import org.apache.flink.table.planner.delegation.hive.operations.HiveLoadDataOperation;
 import org.apache.flink.util.StringUtils;
+
+import org.antlr.runtime.tree.Tree;
+import org.apache.calcite.plan.RelOptCluster;
+import org.apache.calcite.tools.FrameworkConfig;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.net.URLCodec;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -58,6 +50,16 @@ import org.apache.hadoop.hive.ql.metadata.Table;
 import org.apache.hadoop.hive.ql.parse.EximUtil;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
 import org.apache.hadoop.mapred.InputFormat;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.stripQuotes;
 
 /** Ported hive's org.apache.hadoop.hive.ql.parse.LoadSemanticAnalyzer. */
 public class HiveParserLoadSemanticAnalyzer {

@@ -18,23 +18,36 @@
 
 package org.apache.flink.table.planner.delegation.hive;
 
-import static org.apache.flink.table.planner.delegation.hive.HiveParserTypeCheckProcFactory.DefaultExprProcessor.getFunctionText;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getColumnInternalName;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.unescapeIdentifier;
+import org.apache.flink.connectors.hive.FlinkHiveException;
+import org.apache.flink.connectors.hive.HiveConfVars;
+import org.apache.flink.table.catalog.hive.client.HiveMetastoreClientWrapper;
+import org.apache.flink.table.catalog.hive.client.HiveShim;
+import org.apache.flink.table.catalog.hive.client.HiveShimLoader;
+import org.apache.flink.table.catalog.hive.factories.HiveCatalogFactoryOptions;
+import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
+import org.apache.flink.table.catalog.hive.util.HiveTypeUtil;
+import org.apache.flink.table.functions.FunctionDefinition;
+import org.apache.flink.table.functions.FunctionKind;
+import org.apache.flink.table.functions.hive.HiveGenericUDAF;
+import org.apache.flink.table.module.hive.udf.generic.GenericUDFLegacyGroupingID;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveASTParseDriver;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserASTNode;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.GenericUDAFInfo;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserJoinCondTypeCheckProcFactory;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserQB;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserRowResolver;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserSemanticAnalyzer;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserSqlFunctionConverter;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserTypeCheckCtx;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserTypeConverter;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserUnparseTranslator;
+import org.apache.flink.table.planner.delegation.hive.parse.HiveASTParser;
+import org.apache.flink.table.planner.delegation.hive.parse.HiveParserCreateViewInfo;
+import org.apache.flink.table.planner.delegation.hive.parse.HiveParserErrorMsg;
+import org.apache.flink.table.types.DataType;
+import org.apache.flink.util.Preconditions;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.TokenRewriteStream;
 import org.antlr.runtime.tree.Tree;
@@ -84,35 +97,6 @@ import org.apache.calcite.util.ConversionUtil;
 import org.apache.calcite.util.ImmutableBitSet;
 import org.apache.calcite.util.NlsString;
 import org.apache.calcite.util.Pair;
-import org.apache.flink.connectors.hive.FlinkHiveException;
-import org.apache.flink.connectors.hive.HiveConfVars;
-import org.apache.flink.table.catalog.hive.client.HiveMetastoreClientWrapper;
-import org.apache.flink.table.catalog.hive.client.HiveShim;
-import org.apache.flink.table.catalog.hive.client.HiveShimLoader;
-import org.apache.flink.table.catalog.hive.factories.HiveCatalogFactoryOptions;
-import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
-import org.apache.flink.table.catalog.hive.util.HiveTypeUtil;
-import org.apache.flink.table.functions.FunctionDefinition;
-import org.apache.flink.table.functions.FunctionKind;
-import org.apache.flink.table.functions.hive.HiveGenericUDAF;
-import org.apache.flink.table.module.hive.udf.generic.GenericUDFLegacyGroupingID;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveASTParseDriver;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserASTNode;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.GenericUDAFInfo;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserJoinCondTypeCheckProcFactory;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserQB;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserRowResolver;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserSemanticAnalyzer;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserSqlFunctionConverter;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserTypeCheckCtx;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserTypeConverter;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserUnparseTranslator;
-import org.apache.flink.table.planner.delegation.hive.parse.HiveASTParser;
-import org.apache.flink.table.planner.delegation.hive.parse.HiveParserCreateViewInfo;
-import org.apache.flink.table.planner.delegation.hive.parse.HiveParserErrorMsg;
-import org.apache.flink.table.types.DataType;
-import org.apache.flink.util.Preconditions;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.hive.conf.HiveConf;
@@ -147,6 +131,24 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoUtils;
 import org.apache.hadoop.io.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
+
+import static org.apache.flink.table.planner.delegation.hive.HiveParserTypeCheckProcFactory.DefaultExprProcessor.getFunctionText;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getColumnInternalName;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.unescapeIdentifier;
 
 /** Util class for the hive parser. */
 public class HiveParserUtils {
@@ -235,9 +237,7 @@ public class HiveParserUtils {
                                 ((MapTypeInfo) typeInfo).getMapValueTypeInfo(), relTypeFactory);
                 return relTypeFactory.createMapType(keyType, valType);
             case STRUCT:
-                List<TypeInfo> types =
-                        HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
-                                .getStructFieldTypeInfos((StructTypeInfo) typeInfo);
+                List<TypeInfo> types = HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion()).getStructFieldTypeInfos((StructTypeInfo) typeInfo);
                 List<RelDataType> convertedTypes = new ArrayList<>(types.size());
                 for (TypeInfo type : types) {
                     convertedTypes.add(toRelDataType(type, relTypeFactory));

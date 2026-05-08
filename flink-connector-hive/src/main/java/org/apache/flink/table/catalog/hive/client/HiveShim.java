@@ -18,20 +18,12 @@
 
 package org.apache.flink.table.catalog.hive.client;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
-import javax.annotation.Nullable;
 import org.apache.flink.api.common.serialization.BulkWriter;
 import org.apache.flink.table.api.constraints.UniqueConstraint;
 import org.apache.flink.table.catalog.stats.CatalogColumnStatisticsDataDate;
 import org.apache.flink.table.data.RowData;
 import org.apache.flink.table.types.logical.LogicalType;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
@@ -64,6 +56,17 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.thrift.TException;
+
+import javax.annotation.Nullable;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
 
 /** A shim layer to support different versions of Hive. */
 public interface HiveShim extends Serializable {
@@ -307,7 +310,10 @@ public interface HiveShim extends Serializable {
      * Walk an expression tree using PreOrderWalker. Hive 4 changed PreOrderWalker to require
      * SemanticDispatcher instead of Dispatcher.
      */
-    void walkExpressionTree(Node expression, Dispatcher dispatcher) throws SemanticException;
+    void walkExpressionTree(
+            Node expression,
+            Dispatcher dispatcher)
+            throws SemanticException;
 
     /**
      * Get a GenericUDAFEvaluator for windowing functions (LEAD/LAG). Hive 4 added a 5th boolean
@@ -319,7 +325,7 @@ public interface HiveShim extends Serializable {
             boolean isDistinct,
             boolean isAllColumns)
             throws SemanticException {
-        return org.apache.hadoop.hive.ql.exec.FunctionRegistry.getGenericWindowingEvaluator(
-                functionName, argumentOIs, isDistinct, isAllColumns);
+        return org.apache.hadoop.hive.ql.exec.FunctionRegistry
+                .getGenericWindowingEvaluator(functionName, argumentOIs, isDistinct, isAllColumns);
     }
 }

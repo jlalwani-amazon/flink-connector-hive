@@ -18,49 +18,6 @@
 
 package org.apache.flink.table.planner.delegation.hive.copy;
 
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.containsLeadLagUDF;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.doPhase1GetDistinctFuncExprs;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.findSimpleTableName;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.findTabRefIdxs;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getAliasId;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getColumnInternalName;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getObjectIdentifier;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getUnescapedName;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getUnescapedOriginTableName;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.handleQueryWindowClauses;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.initPhase1Ctx;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.parseCompoundName;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.processPTFPartitionSpec;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.processWindowFunction;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.readProps;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.stripQuotes;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.unescapeIdentifier;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.unescapeSQLString;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.unparseExprForValuesClause;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.validatePartColumnType;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import javax.annotation.Nullable;
-import org.antlr.runtime.ClassicToken;
-import org.antlr.runtime.Token;
-import org.antlr.runtime.tree.Tree;
-import org.apache.calcite.plan.RelOptCluster;
-import org.apache.calcite.rel.RelNode;
-import org.apache.calcite.sql.SqlOperator;
-import org.apache.calcite.tools.FrameworkConfig;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.table.api.DataTypes;
@@ -90,6 +47,15 @@ import org.apache.flink.table.planner.delegation.hive.parse.HiveParserDDLSemanti
 import org.apache.flink.table.planner.delegation.hive.parse.HiveParserErrorMsg;
 import org.apache.flink.table.types.DataType;
 import org.apache.flink.util.Preconditions;
+
+import org.antlr.runtime.ClassicToken;
+import org.antlr.runtime.Token;
+import org.antlr.runtime.tree.Tree;
+import org.apache.calcite.plan.RelOptCluster;
+import org.apache.calcite.rel.RelNode;
+import org.apache.calcite.sql.SqlOperator;
+import org.apache.calcite.tools.FrameworkConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.Warehouse;
@@ -122,6 +88,43 @@ import org.apache.hadoop.hive.ql.plan.HiveOperation;
 import org.apache.hadoop.hive.ql.session.SessionState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.containsLeadLagUDF;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.doPhase1GetDistinctFuncExprs;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.findSimpleTableName;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.findTabRefIdxs;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getAliasId;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getColumnInternalName;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getObjectIdentifier;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getUnescapedName;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getUnescapedOriginTableName;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.handleQueryWindowClauses;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.initPhase1Ctx;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.parseCompoundName;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.processPTFPartitionSpec;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.processWindowFunction;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.readProps;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.stripQuotes;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.unescapeIdentifier;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.unescapeSQLString;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.unparseExprForValuesClause;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.validatePartColumnType;
 
 /**
  * Counterpart of hive's org.apache.hadoop.hive.ql.parse.SemanticAnalyzer and adapted to our needs.
@@ -1668,21 +1671,10 @@ public class HiveParserSemanticAnalyzer {
                                 String ctasDbName = null;
                                 if (tableDesc != null) {
                                     try {
-                                        ctasLocation =
-                                                (String)
-                                                        tableDesc
-                                                                .getClass()
-                                                                .getMethod("getLocation")
-                                                                .invoke(tableDesc);
-                                        ctasDbName =
-                                                (String)
-                                                        tableDesc
-                                                                .getClass()
-                                                                .getMethod("getDatabaseName")
-                                                                .invoke(tableDesc);
+                                        ctasLocation = (String) tableDesc.getClass().getMethod("getLocation").invoke(tableDesc);
+                                        ctasDbName = (String) tableDesc.getClass().getMethod("getDatabaseName").invoke(tableDesc);
                                     } catch (Exception e) {
-                                        throw new SemanticException(
-                                                "Failed to read CreateTableDesc", e);
+                                        throw new SemanticException("Failed to read CreateTableDesc", e);
                                     }
                                 }
                                 if (ctasLocation != null) {
@@ -1702,7 +1694,8 @@ public class HiveParserSemanticAnalyzer {
                                         throw new SemanticException(e);
                                     }
                                 }
-                                if (HiveConf.getBoolVar(conf, HiveConfVars.HIVE_STATS_AUTOGATHER)) {
+                                if (HiveConf.getBoolVar(
+                                        conf, HiveConfVars.HIVE_STATS_AUTOGATHER)) {
                                     TableSpec ts =
                                             new TableSpec(
                                                     catalogRegistry,

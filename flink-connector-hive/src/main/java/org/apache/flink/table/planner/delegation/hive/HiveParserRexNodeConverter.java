@@ -18,17 +18,20 @@
 
 package org.apache.flink.table.planner.delegation.hive;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import org.apache.flink.table.catalog.hive.client.HiveShim;
+import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
+import org.apache.flink.table.module.hive.udf.generic.HiveGenericUDFArrayAccessStructField;
+import org.apache.flink.table.module.hive.udf.generic.HiveGenericUDFToDecimal;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveASTParseUtils;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserExprNodeDescUtils;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserExprNodeSubQueryDesc;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserIntervalDayTime;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserIntervalYearMonth;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserRowResolver;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserSqlFunctionConverter;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserTypeConverter;
+import org.apache.flink.util.Preconditions;
+
 import org.apache.calcite.avatica.util.TimeUnit;
 import org.apache.calcite.plan.RelOptCluster;
 import org.apache.calcite.rel.RelNode;
@@ -54,19 +57,6 @@ import org.apache.calcite.util.ConversionUtil;
 import org.apache.calcite.util.DateString;
 import org.apache.calcite.util.NlsString;
 import org.apache.calcite.util.TimestampString;
-import org.apache.flink.table.catalog.hive.client.HiveShim;
-import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
-import org.apache.flink.table.module.hive.udf.generic.HiveGenericUDFArrayAccessStructField;
-import org.apache.flink.table.module.hive.udf.generic.HiveGenericUDFToDecimal;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveASTParseUtils;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserExprNodeDescUtils;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserExprNodeSubQueryDesc;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserIntervalDayTime;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserIntervalYearMonth;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserRowResolver;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserSqlFunctionConverter;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserTypeConverter;
-import org.apache.flink.util.Preconditions;
 import org.apache.hadoop.hive.common.type.Decimal128;
 import org.apache.hadoop.hive.common.type.HiveChar;
 import org.apache.hadoop.hive.common.type.HiveDecimal;
@@ -105,6 +95,18 @@ import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoUtils;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Counterpart of Hive's org.apache.hadoop.hive.ql.optimizer.calcite.translator.RexNodeConverter.
@@ -931,8 +933,7 @@ public class HiveParserRexNodeConverter {
      * class checks.
      */
     private static boolean isGenericUDFCase(Object udf) {
-        return udf.getClass()
-                .getName()
-                .equals("org.apache.hadoop.hive.ql.udf.generic.GenericUDFCase");
+        return udf.getClass().getName().equals(
+                "org.apache.hadoop.hive.ql.udf.generic.GenericUDFCase");
     }
 }

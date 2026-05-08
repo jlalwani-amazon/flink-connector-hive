@@ -18,19 +18,6 @@
 
 package org.apache.flink.table.functions.hive;
 
-import static org.apache.flink.table.HiveVersionTestUtil.HIVE_230_OR_LATER;
-import static org.apache.flink.table.HiveVersionTestUtil.HIVE_310_OR_LATER;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.catalog.hive.client.HiveShim;
 import org.apache.flink.table.catalog.hive.client.HiveShimLoader;
@@ -39,6 +26,7 @@ import org.apache.flink.table.functions.hive.util.TestGenericUDFStructSize;
 import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.types.inference.utils.CallContextMock;
 import org.apache.flink.types.Row;
+
 import org.apache.hadoop.hive.ql.udf.UDFUnhex;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFAbs;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFCeil;
@@ -50,6 +38,20 @@ import org.apache.hadoop.hive.ql.udf.generic.GenericUDFStringToMap;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFStruct;
 import org.junit.Assume;
 import org.junit.Test;
+
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.apache.flink.table.HiveVersionTestUtil.HIVE_230_OR_LATER;
+import static org.apache.flink.table.HiveVersionTestUtil.HIVE_310_OR_LATER;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /** Test for {@link HiveGenericUDF}. */
 public class HiveGenericUDFTest {

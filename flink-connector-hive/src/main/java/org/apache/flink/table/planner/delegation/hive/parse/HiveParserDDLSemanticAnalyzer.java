@@ -18,55 +18,6 @@
 
 package org.apache.flink.table.planner.delegation.hive.parse;
 
-import static org.apache.flink.table.catalog.hive.util.AlterTableOp.ALTER_COLUMNS;
-import static org.apache.flink.table.catalog.hive.util.AlterTableOp.CHANGE_FILE_FORMAT;
-import static org.apache.flink.table.catalog.hive.util.AlterTableOp.CHANGE_LOCATION;
-import static org.apache.flink.table.catalog.hive.util.AlterTableOp.CHANGE_SERDE_PROPS;
-import static org.apache.flink.table.catalog.hive.util.AlterTableOp.CHANGE_TBL_PROPS;
-import static org.apache.flink.table.catalog.hive.util.Constants.ALTER_COL_CASCADE;
-import static org.apache.flink.table.catalog.hive.util.Constants.ALTER_DATABASE_OP;
-import static org.apache.flink.table.catalog.hive.util.Constants.ALTER_TABLE_OP;
-import static org.apache.flink.table.catalog.hive.util.Constants.COLLECTION_DELIM;
-import static org.apache.flink.table.catalog.hive.util.Constants.DATABASE_LOCATION_URI;
-import static org.apache.flink.table.catalog.hive.util.Constants.DATABASE_OWNER_NAME;
-import static org.apache.flink.table.catalog.hive.util.Constants.DATABASE_OWNER_TYPE;
-import static org.apache.flink.table.catalog.hive.util.Constants.ESCAPE_CHAR;
-import static org.apache.flink.table.catalog.hive.util.Constants.FIELD_DELIM;
-import static org.apache.flink.table.catalog.hive.util.Constants.LINE_DELIM;
-import static org.apache.flink.table.catalog.hive.util.Constants.MAPKEY_DELIM;
-import static org.apache.flink.table.catalog.hive.util.Constants.NOT_NULL_COLS;
-import static org.apache.flink.table.catalog.hive.util.Constants.NOT_NULL_CONSTRAINT_TRAITS;
-import static org.apache.flink.table.catalog.hive.util.Constants.PK_CONSTRAINT_TRAIT;
-import static org.apache.flink.table.catalog.hive.util.Constants.SERDE_INFO_PROP_PREFIX;
-import static org.apache.flink.table.catalog.hive.util.Constants.SERDE_LIB_CLASS_NAME;
-import static org.apache.flink.table.catalog.hive.util.Constants.SERIALIZATION_NULL_FORMAT;
-import static org.apache.flink.table.catalog.hive.util.Constants.STORED_AS_FILE_FORMAT;
-import static org.apache.flink.table.catalog.hive.util.Constants.STORED_AS_INPUT_FORMAT;
-import static org.apache.flink.table.catalog.hive.util.Constants.STORED_AS_OUTPUT_FORMAT;
-import static org.apache.flink.table.catalog.hive.util.Constants.TABLE_IS_EXTERNAL;
-import static org.apache.flink.table.catalog.hive.util.Constants.TABLE_LOCATION_URI;
-import static org.apache.flink.table.catalog.hive.util.HiveDDLUtils.COL_DELIMITER;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.NotNullConstraint;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.PrimaryKey;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getColumns;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.stripQuotes;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import org.antlr.runtime.tree.CommonTree;
-import org.apache.calcite.plan.RelOptCluster;
-import org.apache.calcite.rel.RelNode;
-import org.apache.calcite.tools.FrameworkConfig;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.connectors.hive.HiveConfVars;
@@ -161,6 +112,12 @@ import org.apache.flink.table.planner.utils.HiveCatalogUtils;
 import org.apache.flink.table.planner.utils.TableSchemaUtils;
 import org.apache.flink.table.resource.ResourceType;
 import org.apache.flink.table.resource.ResourceUri;
+
+import org.antlr.runtime.tree.CommonTree;
+import org.apache.calcite.plan.RelOptCluster;
+import org.apache.calcite.rel.RelNode;
+import org.apache.calcite.tools.FrameworkConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hive.common.StatsSetupConst;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.TableType;
@@ -184,6 +141,51 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoUtils;
 import org.apache.hadoop.hive.serde2.typeinfo.VarcharTypeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.apache.flink.table.catalog.hive.util.AlterTableOp.ALTER_COLUMNS;
+import static org.apache.flink.table.catalog.hive.util.AlterTableOp.CHANGE_FILE_FORMAT;
+import static org.apache.flink.table.catalog.hive.util.AlterTableOp.CHANGE_LOCATION;
+import static org.apache.flink.table.catalog.hive.util.AlterTableOp.CHANGE_SERDE_PROPS;
+import static org.apache.flink.table.catalog.hive.util.AlterTableOp.CHANGE_TBL_PROPS;
+import static org.apache.flink.table.catalog.hive.util.Constants.ALTER_COL_CASCADE;
+import static org.apache.flink.table.catalog.hive.util.Constants.ALTER_DATABASE_OP;
+import static org.apache.flink.table.catalog.hive.util.Constants.ALTER_TABLE_OP;
+import static org.apache.flink.table.catalog.hive.util.Constants.COLLECTION_DELIM;
+import static org.apache.flink.table.catalog.hive.util.Constants.DATABASE_LOCATION_URI;
+import static org.apache.flink.table.catalog.hive.util.Constants.DATABASE_OWNER_NAME;
+import static org.apache.flink.table.catalog.hive.util.Constants.DATABASE_OWNER_TYPE;
+import static org.apache.flink.table.catalog.hive.util.Constants.ESCAPE_CHAR;
+import static org.apache.flink.table.catalog.hive.util.Constants.FIELD_DELIM;
+import static org.apache.flink.table.catalog.hive.util.Constants.LINE_DELIM;
+import static org.apache.flink.table.catalog.hive.util.Constants.MAPKEY_DELIM;
+import static org.apache.flink.table.catalog.hive.util.Constants.NOT_NULL_COLS;
+import static org.apache.flink.table.catalog.hive.util.Constants.NOT_NULL_CONSTRAINT_TRAITS;
+import static org.apache.flink.table.catalog.hive.util.Constants.PK_CONSTRAINT_TRAIT;
+import static org.apache.flink.table.catalog.hive.util.Constants.SERDE_INFO_PROP_PREFIX;
+import static org.apache.flink.table.catalog.hive.util.Constants.SERDE_LIB_CLASS_NAME;
+import static org.apache.flink.table.catalog.hive.util.Constants.SERIALIZATION_NULL_FORMAT;
+import static org.apache.flink.table.catalog.hive.util.Constants.STORED_AS_FILE_FORMAT;
+import static org.apache.flink.table.catalog.hive.util.Constants.STORED_AS_INPUT_FORMAT;
+import static org.apache.flink.table.catalog.hive.util.Constants.STORED_AS_OUTPUT_FORMAT;
+import static org.apache.flink.table.catalog.hive.util.Constants.TABLE_IS_EXTERNAL;
+import static org.apache.flink.table.catalog.hive.util.Constants.TABLE_LOCATION_URI;
+import static org.apache.flink.table.catalog.hive.util.HiveDDLUtils.COL_DELIMITER;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.NotNullConstraint;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.PrimaryKey;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getColumns;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.stripQuotes;
 
 /**
  * Ported hive's org.apache.hadoop.hive.ql.parse.DDLSemanticAnalyzer, and also incorporated
@@ -294,9 +296,12 @@ public class HiveParserDDLSemanticAnalyzer {
         reservedPartitionValues.add(
                 HiveConf.getVar(conf, HiveConfVars.DEFAULT_ZOOKEEPER_PARTITION_NAME));
         // Partition value can't end in this suffix
-        reservedPartitionValues.add(HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_ORIGINAL));
-        reservedPartitionValues.add(HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_ARCHIVED));
-        reservedPartitionValues.add(HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_EXTRACTED));
+        reservedPartitionValues.add(
+                HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_ORIGINAL));
+        reservedPartitionValues.add(
+                HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_ARCHIVED));
+        reservedPartitionValues.add(
+                HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_EXTRACTED));
     }
 
     private Table getTable(ObjectPath tablePath) {
@@ -1275,8 +1280,7 @@ public class HiveParserDDLSemanticAnalyzer {
         String ownerName;
         Object ownerType;
         try {
-            ownerName =
-                    (String) principalDesc.getClass().getMethod("getName").invoke(principalDesc);
+            ownerName = (String) principalDesc.getClass().getMethod("getName").invoke(principalDesc);
             ownerType = principalDesc.getClass().getMethod("getType").invoke(principalDesc);
         } catch (Exception e) {
             throw new SemanticException("Failed to read PrincipalDesc", e);
@@ -1801,7 +1805,9 @@ public class HiveParserDDLSemanticAnalyzer {
             spec = new CatalogPartitionSpec(new HashMap<>(partSpec));
         }
         return new ShowPartitionsOperation(
-                tableIdentifier, spec, HiveConf.getVar(conf, HiveConfVars.DEFAULT_PARTITION_NAME));
+                tableIdentifier,
+                spec,
+                HiveConf.getVar(conf, HiveConfVars.DEFAULT_PARTITION_NAME));
     }
 
     private Operation convertShowDatabases() {

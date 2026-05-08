@@ -18,6 +18,14 @@
 
 package org.apache.flink.table.planner.delegation.hive.copy;
 
+import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
+
+import org.apache.hadoop.hive.ql.exec.ColumnInfo;
+import org.apache.hadoop.hive.ql.exec.RowSchema;
+import org.apache.hadoop.hive.ql.parse.SemanticException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +34,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
-import org.apache.hadoop.hive.ql.exec.ColumnInfo;
-import org.apache.hadoop.hive.ql.exec.RowSchema;
-import org.apache.hadoop.hive.ql.parse.SemanticException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Counterpart of hive's org.apache.hadoop.hive.ql.parse.RowResolver. */
 public class HiveParserRowResolver implements Serializable {
@@ -370,8 +372,7 @@ public class HiveParserRowResolver implements Serializable {
         int i = 0;
 
         int outputColPos = outputColPosRef == null ? 0 : outputColPosRef.val;
-        for (ColumnInfo cInfoFrmInput :
-                HiveReflectionUtils.getRowSchemaSignature(rrToAddFrom.getRowSchema())) {
+        for (ColumnInfo cInfoFrmInput : HiveReflectionUtils.getRowSchemaSignature(rrToAddFrom.getRowSchema())) {
             if (numColumns >= 0 && i == numColumns) {
                 break;
             }

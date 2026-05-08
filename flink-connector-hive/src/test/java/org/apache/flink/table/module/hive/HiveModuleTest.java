@@ -17,12 +17,6 @@
 
 package org.apache.flink.table.module.hive;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.apache.flink.table.HiveVersionTestUtil;
 import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.api.TableEnvironment;
@@ -36,8 +30,16 @@ import org.apache.flink.table.types.inference.utils.CallContextMock;
 import org.apache.flink.table.utils.LegacyRowResource;
 import org.apache.flink.types.Row;
 import org.apache.flink.util.CollectionUtil;
+
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /** Test for {@link HiveModule}. */
 public class HiveModuleTest {

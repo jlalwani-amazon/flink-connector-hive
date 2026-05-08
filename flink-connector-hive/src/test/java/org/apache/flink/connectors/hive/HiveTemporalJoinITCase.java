@@ -18,10 +18,6 @@
 
 package org.apache.flink.connectors.hive;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import java.sql.Timestamp;
-import java.util.Arrays;
 import org.apache.flink.table.HiveVersionTestUtil;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.SqlDialect;
@@ -34,9 +30,15 @@ import org.apache.flink.table.catalog.hive.HiveTestUtils;
 import org.apache.flink.table.planner.factories.utils.TestCollectionTableFactory;
 import org.apache.flink.table.planner.utils.TableTestBase;
 import org.apache.flink.types.Row;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.sql.Timestamp;
+import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Test Temporal join of hive tables.

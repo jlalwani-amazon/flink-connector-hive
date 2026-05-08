@@ -18,10 +18,6 @@
 
 package org.apache.flink.table.catalog.hive.util;
 
-import static org.apache.flink.util.Preconditions.checkNotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.catalog.exceptions.CatalogException;
@@ -48,6 +44,7 @@ import org.apache.flink.table.types.logical.VarBinaryType;
 import org.apache.flink.table.types.logical.VarCharType;
 import org.apache.flink.table.types.logical.YearMonthIntervalType;
 import org.apache.flink.table.types.logical.utils.LogicalTypeDefaultVisitor;
+
 import org.apache.hadoop.hive.common.type.HiveChar;
 import org.apache.hadoop.hive.common.type.HiveVarchar;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
@@ -61,6 +58,11 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoUtils;
 import org.apache.hadoop.hive.serde2.typeinfo.VarcharTypeInfo;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /** Utils to convert data types between Flink and Hive. */
 @Internal
@@ -137,9 +139,7 @@ public class HiveTypeUtil {
                 List<String> names =
                         HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
                                 .getStructFieldNames(structTypeInfo);
-                List<TypeInfo> typeInfos =
-                        HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
-                                .getStructFieldTypeInfos(structTypeInfo);
+                List<TypeInfo> typeInfos = HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion()).getStructFieldTypeInfos(structTypeInfo);
 
                 DataTypes.Field[] fields = new DataTypes.Field[names.size()];
 

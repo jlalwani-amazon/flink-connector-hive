@@ -18,11 +18,6 @@
 
 package org.apache.flink.connectors.hive.read;
 
-import static org.apache.hadoop.mapreduce.lib.input.FileInputFormat.INPUT_DIR;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import org.apache.flink.api.java.hadoop.mapred.wrapper.HadoopDummyReporter;
 import org.apache.flink.connectors.hive.FlinkHiveException;
 import org.apache.flink.connectors.hive.HiveTablePartition;
@@ -35,6 +30,7 @@ import org.apache.flink.table.data.util.DataFormatConverters;
 import org.apache.flink.table.functions.hive.conversion.HiveInspectors;
 import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.types.logical.LogicalType;
+
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.metastore.api.StorageDescriptor;
@@ -49,6 +45,12 @@ import org.apache.hadoop.mapred.RecordReader;
 import org.apache.hadoop.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.apache.hadoop.mapreduce.lib.input.FileInputFormat.INPUT_DIR;
 
 /** Hive {@link SplitReader} to read files using hadoop mapred {@link RecordReader}. */
 public class HiveMapredSplitReader implements SplitReader {
@@ -122,7 +124,8 @@ public class HiveMapredSplitReader implements SplitReader {
                     (Deserializer)
                             Class.forName(sd.getSerdeInfo().getSerializationLib()).newInstance();
             Configuration conf = new Configuration();
-            hiveShim.initializeSerDe(deserializer, conf, hiveTablePartition.getTableProps(), null);
+            hiveShim.initializeSerDe(
+                    deserializer, conf, hiveTablePartition.getTableProps(), null);
             structObjectInspector = (StructObjectInspector) deserializer.getObjectInspector();
             structFields = structObjectInspector.getAllStructFieldRefs();
         } catch (Exception e) {

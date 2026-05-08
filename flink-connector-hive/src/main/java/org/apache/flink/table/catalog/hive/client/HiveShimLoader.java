@@ -18,12 +18,14 @@
 
 package org.apache.flink.table.catalog.hive.client;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import org.apache.flink.table.catalog.exceptions.CatalogException;
+
 import org.apache.hive.common.util.HiveVersionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /** A loader to load HiveShim. */
 public class HiveShimLoader {
@@ -133,8 +135,7 @@ public class HiveShimLoader {
             return (HiveShim) clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new CatalogException(
-                    "Failed to load HiveShim class "
-                            + className
+                    "Failed to load HiveShim class " + className
                             + ". Make sure flink-connector-hive-4.0.0 is on the classpath.",
                     e);
         }

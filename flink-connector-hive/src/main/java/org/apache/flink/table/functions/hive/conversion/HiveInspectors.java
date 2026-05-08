@@ -18,15 +18,6 @@
 
 package org.apache.flink.table.functions.hive.conversion;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.Period;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Nullable;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.table.catalog.exceptions.CatalogException;
 import org.apache.flink.table.catalog.hive.client.HiveShim;
@@ -44,6 +35,7 @@ import org.apache.flink.table.types.logical.RowType;
 import org.apache.flink.table.types.logical.VarCharType;
 import org.apache.flink.types.Row;
 import org.apache.flink.util.CollectionUtil;
+
 import org.apache.hadoop.hive.common.type.HiveChar;
 import org.apache.hadoop.hive.common.type.HiveDecimal;
 import org.apache.hadoop.hive.common.type.HiveIntervalDayTime;
@@ -111,6 +103,17 @@ import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
+
+import javax.annotation.Nullable;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Util for any ObjectInspector related inspection and conversion of Hive data to/from Flink data.
@@ -587,9 +590,7 @@ public class HiveInspectors {
                         getObjectInspector(mapType.getMapValueTypeInfo()));
             case STRUCT:
                 StructTypeInfo structType = (StructTypeInfo) type;
-                List<TypeInfo> fieldTypes =
-                        HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
-                                .getStructFieldTypeInfos(structType);
+                List<TypeInfo> fieldTypes = HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion()).getStructFieldTypeInfos(structType);
 
                 List<ObjectInspector> fieldInspectors = new ArrayList<ObjectInspector>();
                 for (TypeInfo fieldType : fieldTypes) {

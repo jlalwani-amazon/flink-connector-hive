@@ -18,20 +18,6 @@
 
 package org.apache.flink.connectors.hive;
 
-import static org.apache.flink.table.catalog.hive.HiveTestUtils.serialize;
-import static org.apache.flink.table.data.StringData.fromString;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.stream.Collectors;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.table.catalog.hive.client.HiveShimLoader;
@@ -53,9 +39,25 @@ import org.apache.flink.table.types.logical.SmallIntType;
 import org.apache.flink.table.types.logical.TimestampType;
 import org.apache.flink.table.types.logical.TinyIntType;
 import org.apache.flink.table.types.logical.VarCharType;
+
 import org.apache.hadoop.hive.metastore.api.StorageDescriptor;
 import org.apache.hadoop.mapred.JobConf;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.stream.Collectors;
+
+import static org.apache.flink.table.catalog.hive.HiveTestUtils.serialize;
+import static org.apache.flink.table.data.StringData.fromString;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /** Tests for HiveSourceDynamicFileEnumerator. */
 class HiveSourceDynamicFileEnumeratorTest {

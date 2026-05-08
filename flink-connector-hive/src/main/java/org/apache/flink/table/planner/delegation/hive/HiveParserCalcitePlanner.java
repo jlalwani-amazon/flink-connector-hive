@@ -18,50 +18,49 @@
 
 package org.apache.flink.table.planner.delegation.hive;
 
-import static org.apache.flink.table.planner.delegation.hive.HiveParserUtils.generateErrorMessage;
-import static org.apache.flink.table.planner.delegation.hive.HiveParserUtils.rewriteGroupingFunctionAST;
-import static org.apache.flink.table.planner.delegation.hive.HiveParserUtils.verifyCanHandleAst;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.addToGBExpr;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.buildHiveColNameToInputPosMap;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.buildHiveToCalciteColumnMap;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.convert;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.genValues;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getBound;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getColumnInternalName;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getCorrelationUse;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getGroupByForClause;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getGroupingSets;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getGroupingSetsForCube;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getGroupingSetsForRollup;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getHiveAggInfo;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getOrderKeys;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getPartitionKeys;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getWindowSpecIndx;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.initPhase1Ctx;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.processPositionAlias;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.removeOBInSubQuery;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.topLevelConjunctCheck;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.unescapeIdentifier;
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.validateNoHavingReferenceToAlias;
+import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.connectors.hive.HiveConfVars;
+import org.apache.flink.table.calcite.bridge.CalciteContext;
+import org.apache.flink.table.catalog.CatalogRegistry;
+import org.apache.flink.table.catalog.CatalogTable;
+import org.apache.flink.table.catalog.Column;
+import org.apache.flink.table.catalog.ObjectIdentifier;
+import org.apache.flink.table.catalog.ResolvedCatalogTable;
+import org.apache.flink.table.catalog.ResolvedSchema;
+import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
+import org.apache.flink.table.catalog.hive.util.HiveTypeUtil;
+import org.apache.flink.table.functions.hive.conversion.HiveInspectors;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveASTParseDriver;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveASTParseUtils;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserASTBuilder;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserASTNode;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.AggInfo;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserContext;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserJoinTypeCheckCtx;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserNamedJoinInfo;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserPreCboCtx;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserQB;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserQBExpr;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserQBParseInfo;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserQBSubQuery;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserQueryState;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserRowResolver;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserSemanticAnalyzer;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserSqlFunctionConverter;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserSubQueryUtils;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserTypeCheckCtx;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserTypeConverter;
+import org.apache.flink.table.planner.delegation.hive.copy.HiveParserWindowingSpec;
+import org.apache.flink.table.planner.delegation.hive.parse.HiveASTParser;
+import org.apache.flink.table.planner.delegation.hive.parse.HiveParserCreateViewInfo;
+import org.apache.flink.table.planner.delegation.hive.parse.HiveParserErrorMsg;
+import org.apache.flink.table.planner.plan.nodes.hive.LogicalDistribution;
+import org.apache.flink.table.types.DataType;
+import org.apache.flink.util.CollectionUtil;
+import org.apache.flink.util.Preconditions;
 
 import com.google.common.collect.ImmutableList;
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.util.AbstractMap;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.apache.calcite.plan.RelOptCluster;
 import org.apache.calcite.plan.RelTraitSet;
 import org.apache.calcite.plan.ViewExpanders;
@@ -110,47 +109,6 @@ import org.apache.calcite.util.ImmutableBitSet;
 import org.apache.calcite.util.Pair;
 import org.apache.calcite.util.Util;
 import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.connectors.hive.HiveConfVars;
-import org.apache.flink.table.calcite.bridge.CalciteContext;
-import org.apache.flink.table.catalog.CatalogRegistry;
-import org.apache.flink.table.catalog.CatalogTable;
-import org.apache.flink.table.catalog.Column;
-import org.apache.flink.table.catalog.ObjectIdentifier;
-import org.apache.flink.table.catalog.ResolvedCatalogTable;
-import org.apache.flink.table.catalog.ResolvedSchema;
-import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
-import org.apache.flink.table.catalog.hive.util.HiveTypeUtil;
-import org.apache.flink.table.functions.hive.conversion.HiveInspectors;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveASTParseDriver;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveASTParseUtils;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserASTBuilder;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserASTNode;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.AggInfo;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserContext;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserJoinTypeCheckCtx;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserNamedJoinInfo;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserPreCboCtx;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserQB;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserQBExpr;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserQBParseInfo;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserQBSubQuery;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserQueryState;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserRowResolver;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserSemanticAnalyzer;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserSqlFunctionConverter;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserSubQueryUtils;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserTypeCheckCtx;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserTypeConverter;
-import org.apache.flink.table.planner.delegation.hive.copy.HiveParserWindowingSpec;
-import org.apache.flink.table.planner.delegation.hive.parse.HiveASTParser;
-import org.apache.flink.table.planner.delegation.hive.parse.HiveParserCreateViewInfo;
-import org.apache.flink.table.planner.delegation.hive.parse.HiveParserErrorMsg;
-import org.apache.flink.table.planner.plan.nodes.hive.LogicalDistribution;
-import org.apache.flink.table.types.DataType;
-import org.apache.flink.util.CollectionUtil;
-import org.apache.flink.util.Preconditions;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.ErrorMsg;
@@ -176,6 +134,50 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.util.AbstractMap;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.apache.flink.table.planner.delegation.hive.HiveParserUtils.generateErrorMessage;
+import static org.apache.flink.table.planner.delegation.hive.HiveParserUtils.rewriteGroupingFunctionAST;
+import static org.apache.flink.table.planner.delegation.hive.HiveParserUtils.verifyCanHandleAst;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.addToGBExpr;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.buildHiveColNameToInputPosMap;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.buildHiveToCalciteColumnMap;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.convert;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.genValues;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getBound;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getColumnInternalName;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getCorrelationUse;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getGroupByForClause;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getGroupingSets;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getGroupingSetsForCube;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getGroupingSetsForRollup;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getHiveAggInfo;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getOrderKeys;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getPartitionKeys;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.getWindowSpecIndx;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.initPhase1Ctx;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.processPositionAlias;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.removeOBInSubQuery;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.topLevelConjunctCheck;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.unescapeIdentifier;
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.validateNoHavingReferenceToAlias;
 
 /** Ported Hive's CalcitePlanner. */
 public class HiveParserCalcitePlanner {
@@ -1546,8 +1548,7 @@ public class HiveParserCalcitePlanner {
                     throw new SemanticException(
                             "Duplicates detected when adding columns to RR: see previous message");
                 }
-                int vColPos =
-                        HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
+                int vColPos = HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
                 for (Pair<HiveParserASTNode, TypeInfo> astTypePair : vcASTAndType) {
                     addedProjectRR.putExpression(
                             astTypePair.getKey(),
@@ -1705,8 +1706,7 @@ public class HiveParserCalcitePlanner {
                     throw new SemanticException(
                             "Duplicates detected when adding columns to RR: see previous message");
                 }
-                int vcolPos =
-                        HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
+                int vcolPos = HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
                 for (Pair<HiveParserASTNode, TypeInfo> astTypePair : vcASTAndType) {
                     obSyntheticProjectRR.putExpression(
                             astTypePair.getKey(),
@@ -2665,8 +2665,7 @@ public class HiveParserCalcitePlanner {
                 i < correlRel.getRowType().getFieldCount();
                 i++) {
             projects.add(cluster.getRexBuilder().makeInputRef(correlRel, i));
-            ColumnInfo inputColInfo =
-                    HiveReflectionUtils.getRowSchemaSignature(correlRR.getRowSchema()).get(i);
+            ColumnInfo inputColInfo = HiveReflectionUtils.getRowSchemaSignature(correlRR.getRowSchema()).get(i);
             String colAlias = inputColInfo.getAlias();
             ColumnInfo colInfo =
                     new ColumnInfo(

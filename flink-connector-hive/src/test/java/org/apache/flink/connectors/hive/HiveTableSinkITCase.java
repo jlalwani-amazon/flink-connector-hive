@@ -18,37 +18,6 @@
 
 package org.apache.flink.connectors.hive;
 
-import static org.apache.flink.connector.file.table.FileSystemConnectorOptions.PARTITION_TIME_EXTRACTOR_TIMESTAMP_PATTERN;
-import static org.apache.flink.connector.file.table.FileSystemConnectorOptions.SINK_PARTITION_COMMIT_DELAY;
-import static org.apache.flink.connector.file.table.FileSystemConnectorOptions.SINK_PARTITION_COMMIT_POLICY_CLASS;
-import static org.apache.flink.connector.file.table.FileSystemConnectorOptions.SINK_PARTITION_COMMIT_POLICY_KIND;
-import static org.apache.flink.connector.file.table.FileSystemConnectorOptions.SINK_PARTITION_COMMIT_SUCCESS_FILE_NAME;
-import static org.apache.flink.table.api.Expressions.$;
-import static org.apache.flink.table.planner.utils.TableTestUtil.readFromResource;
-import static org.apache.flink.table.planner.utils.TableTestUtil.replaceNodeIdInOperator;
-import static org.apache.flink.table.planner.utils.TableTestUtil.replaceStageId;
-import static org.apache.flink.table.planner.utils.TableTestUtil.replaceStreamNodeId;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import com.google.common.collect.Lists;
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Consumer;
 import org.apache.flink.FlinkVersion;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
@@ -76,10 +45,43 @@ import org.apache.flink.types.Row;
 import org.apache.flink.util.CloseableIterator;
 import org.apache.flink.util.CollectionUtil;
 import org.apache.flink.util.TestLoggerExtension;
+
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
+
+import static org.apache.flink.connector.file.table.FileSystemConnectorOptions.PARTITION_TIME_EXTRACTOR_TIMESTAMP_PATTERN;
+import static org.apache.flink.connector.file.table.FileSystemConnectorOptions.SINK_PARTITION_COMMIT_DELAY;
+import static org.apache.flink.connector.file.table.FileSystemConnectorOptions.SINK_PARTITION_COMMIT_POLICY_CLASS;
+import static org.apache.flink.connector.file.table.FileSystemConnectorOptions.SINK_PARTITION_COMMIT_POLICY_KIND;
+import static org.apache.flink.connector.file.table.FileSystemConnectorOptions.SINK_PARTITION_COMMIT_SUCCESS_FILE_NAME;
+import static org.apache.flink.table.api.Expressions.$;
+import static org.apache.flink.table.planner.utils.TableTestUtil.readFromResource;
+import static org.apache.flink.table.planner.utils.TableTestUtil.replaceNodeIdInOperator;
+import static org.apache.flink.table.planner.utils.TableTestUtil.replaceStageId;
+import static org.apache.flink.table.planner.utils.TableTestUtil.replaceStreamNodeId;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /** Tests {@link HiveTableSink}. */
 @ExtendWith(TestLoggerExtension.class)
@@ -575,7 +577,8 @@ class HiveTableSinkITCase {
         tEnv.useCatalog(hiveCatalog.getName());
 
         String successFileName = tEnv.getConfig().get(SINK_PARTITION_COMMIT_SUCCESS_FILE_NAME);
-        String warehouse = hiveCatalog.getHiveConf().get(HiveConfVars.METASTORE_WAREHOUSE.varname);
+        String warehouse =
+                hiveCatalog.getHiveConf().get(HiveConfVars.METASTORE_WAREHOUSE.varname);
 
         tEnv.executeSql("CREATE TABLE zm_test_non_partition_table (name string)");
         tEnv.executeSql(
@@ -657,7 +660,8 @@ class HiveTableSinkITCase {
                                 -1, 2, getPathSize(Paths.get(wareHouse, "t1")), -1));
         statistics = hiveCatalog.getTableStatistics(new ObjectPath("default", "t2"));
         // Hive 4 reports different rawDataSize for ORC (16 vs 8)
-        long expectedOrcRawDataSize = hiveCatalog.getHiveVersion().compareTo("4.0.0") >= 0 ? 16 : 8;
+        long expectedOrcRawDataSize =
+                hiveCatalog.getHiveVersion().compareTo("4.0.0") >= 0 ? 16 : 8;
         assertThat(statistics)
                 .isEqualTo(
                         new CatalogTableStatistics(

@@ -18,6 +18,14 @@
 
 package org.apache.flink.table.planner.delegation.hive.copy;
 
+import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.table.catalog.CatalogView;
+import org.apache.flink.table.catalog.ResolvedCatalogTable;
+import org.apache.flink.table.planner.delegation.hive.HiveParserQBMetaData;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,12 +34,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.table.catalog.CatalogView;
-import org.apache.flink.table.catalog.ResolvedCatalogTable;
-import org.apache.flink.table.planner.delegation.hive.HiveParserQBMetaData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Counterpart of hive's org.apache.hadoop.hive.ql.parse.QB. */
 public class HiveParserQB {

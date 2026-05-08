@@ -18,10 +18,6 @@
 
 package org.apache.flink.connectors.hive;
 
-import static org.apache.flink.connectors.hive.HiveOptions.TABLE_EXEC_HIVE_NATIVE_AGG_FUNCTION_ENABLED;
-import static org.apache.flink.table.planner.utils.TableTestUtil.readFromResource;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.apache.flink.table.api.SqlDialect;
 import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.catalog.hive.HiveCatalog;
@@ -29,9 +25,14 @@ import org.apache.flink.table.catalog.hive.HiveTestUtils;
 import org.apache.flink.table.module.CoreModule;
 import org.apache.flink.table.module.hive.HiveModule;
 import org.apache.flink.util.CollectionUtil;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.apache.flink.connectors.hive.HiveOptions.TABLE_EXEC_HIVE_NATIVE_AGG_FUNCTION_ENABLED;
+import static org.apache.flink.table.planner.utils.TableTestUtil.readFromResource;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /** Test hive query plan. */
 public class HiveDialectQueryPlanTest {

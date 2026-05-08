@@ -18,11 +18,11 @@
 
 package org.apache.flink.table.planner.delegation.hive.copy;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.apache.flink.table.catalog.hive.client.HiveShim;
+import org.apache.flink.table.catalog.hive.client.HiveShimLoader;
+import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
+import org.apache.flink.table.planner.delegation.hive.HiveParserUtils;
+
 import org.apache.calcite.avatica.util.TimeUnit;
 import org.apache.calcite.plan.RelOptCluster;
 import org.apache.calcite.rel.type.RelDataType;
@@ -35,10 +35,6 @@ import org.apache.calcite.sql.SqlIntervalQualifier;
 import org.apache.calcite.sql.parser.SqlParserPos;
 import org.apache.calcite.sql.type.SqlTypeName;
 import org.apache.calcite.util.ConversionUtil;
-import org.apache.flink.table.catalog.hive.client.HiveShim;
-import org.apache.flink.table.catalog.hive.client.HiveShimLoader;
-import org.apache.flink.table.catalog.hive.util.HiveReflectionUtils;
-import org.apache.flink.table.planner.delegation.hive.HiveParserUtils;
 import org.apache.hadoop.hive.common.type.HiveChar;
 import org.apache.hadoop.hive.common.type.HiveVarchar;
 import org.apache.hadoop.hive.ql.exec.ColumnInfo;
@@ -55,6 +51,12 @@ import org.apache.hadoop.hive.serde2.typeinfo.StructTypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.hive.serde2.typeinfo.UnionTypeInfo;
+
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /** Counterpart of hive's org.apache.hadoop.hive.ql.optimizer.calcite.translator.TypeConverter. */
 public class HiveParserTypeConverter {
@@ -213,14 +215,8 @@ public class HiveParserTypeConverter {
     private static RelDataType convert(
             StructTypeInfo structType, final RelDataTypeFactory dtFactory)
             throws SemanticException {
-        List<RelDataType> fTypes =
-                new ArrayList<>(
-                        HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
-                                .getStructFieldTypeInfos(structType)
-                                .size());
-        for (TypeInfo ti :
-                HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
-                        .getStructFieldTypeInfos(structType)) {
+        List<RelDataType> fTypes = new ArrayList<>(HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion()).getStructFieldTypeInfos(structType).size());
+        for (TypeInfo ti : HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion()).getStructFieldTypeInfos(structType)) {
             fTypes.add(convert(ti, dtFactory));
         }
         return dtFactory.createStructType(

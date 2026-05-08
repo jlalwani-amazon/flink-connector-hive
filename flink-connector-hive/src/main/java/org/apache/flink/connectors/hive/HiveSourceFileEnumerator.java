@@ -18,7 +18,20 @@
 
 package org.apache.flink.connectors.hive;
 
-import static org.apache.flink.util.concurrent.Executors.newDirectExecutorService;
+import org.apache.flink.annotation.VisibleForTesting;
+import org.apache.flink.connector.file.src.FileSourceSplit;
+import org.apache.flink.connector.file.src.enumerate.FileEnumerator;
+import org.apache.flink.connectors.hive.read.HiveSourceSplit;
+import org.apache.flink.connectors.hive.util.HivePartitionUtils;
+import org.apache.flink.core.fs.Path;
+import org.apache.flink.util.Preconditions;
+
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.hive.metastore.api.StorageDescriptor;
+import org.apache.hadoop.mapred.FileSplit;
+import org.apache.hadoop.mapred.InputSplit;
+import org.apache.hadoop.mapred.JobConf;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,19 +42,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import org.apache.flink.annotation.VisibleForTesting;
-import org.apache.flink.connector.file.src.FileSourceSplit;
-import org.apache.flink.connector.file.src.enumerate.FileEnumerator;
-import org.apache.flink.connectors.hive.read.HiveSourceSplit;
-import org.apache.flink.connectors.hive.util.HivePartitionUtils;
-import org.apache.flink.core.fs.Path;
-import org.apache.flink.util.Preconditions;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.hive.metastore.api.StorageDescriptor;
-import org.apache.hadoop.mapred.FileSplit;
-import org.apache.hadoop.mapred.InputSplit;
-import org.apache.hadoop.mapred.JobConf;
+
+import static org.apache.flink.util.concurrent.Executors.newDirectExecutorService;
 
 /**
  * A {@link FileEnumerator} implementation for hive source, which generates splits based on {@link

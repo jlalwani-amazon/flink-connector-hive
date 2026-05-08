@@ -18,14 +18,15 @@
 
 package org.apache.flink.table.planner.delegation.hive;
 
-import java.util.Map;
-import java.util.Stack;
 import org.apache.hadoop.hive.ql.lib.Dispatcher;
 import org.apache.hadoop.hive.ql.lib.Node;
 import org.apache.hadoop.hive.ql.lib.NodeProcessor;
 import org.apache.hadoop.hive.ql.lib.NodeProcessorCtx;
 import org.apache.hadoop.hive.ql.lib.Rule;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
+
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * A rule dispatcher compatible with both Hive 2.x/3.x and 4.x. Hive 4 changed {@code
