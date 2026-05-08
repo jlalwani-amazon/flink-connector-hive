@@ -38,7 +38,6 @@ under the License.
 
     <modules>
         <module>flink-connector-hive</module>
-        <module>flink-connector-hive-4.0.0</module>
         <module>flink-sql-connector-hive-2.3.10</module>
         <module>flink-sql-connector-hive-3.1.3</module>
         <module>flink-connector-hive-e2e-tests</module>
@@ -450,5 +449,35 @@ under the License.
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+            Cyclic dependency avoidance:
+            flink-connector-hive-4.0.0 depends on flink-connector-hive (provided scope,
+            for the HiveShim interface), and the hive4 profile in flink-connector-hive
+            adds a runtime dependency back on the shim for tests. Including both in the
+            same reactor with -Phive4 creates a Maven cyclic reference.
+
+            Fix: The shim module is included via an activeByDefault profile. When -Phive4
+            is explicitly activated, Maven deactivates all activeByDefault profiles,
+            removing the shim from the reactor. The shim jar is then resolved from the
+            local Maven repository (requires prior: mvn install -pl flink-connector-hive-4.0.0 -am -DskipTests).
+        -->
+        <profile>
+            <id>include-hive4-shim</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>flink-connector-hive-4.0.0</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>hive4</id>
+            <!-- Intentionally empty in root pom. Activating this profile deactivates
+                 include-hive4-shim (activeByDefault behavior), removing the shim from
+                 the reactor to break the dependency cycle. -->
+        </profile>
+    </profiles>
 </project>
 
