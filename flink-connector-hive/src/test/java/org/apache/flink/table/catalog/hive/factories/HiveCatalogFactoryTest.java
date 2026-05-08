@@ -18,23 +18,8 @@
 
 package org.apache.flink.table.catalog.hive.factories;
 
-import org.apache.flink.connectors.hive.HiveConfVars;
-import org.apache.flink.core.testutils.CommonTestUtils;
-import org.apache.flink.table.api.ValidationException;
-import org.apache.flink.table.catalog.Catalog;
-import org.apache.flink.table.catalog.CommonCatalogOptions;
-import org.apache.flink.table.catalog.hive.HiveCatalog;
-import org.apache.flink.table.catalog.hive.HiveTestUtils;
-import org.apache.flink.table.factories.FactoryUtil;
-import org.apache.flink.testutils.executor.TestExecutorResource;
-import org.apache.flink.util.TestLogger;
-
-import org.apache.hadoop.hive.conf.HiveConf;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TemporaryFolder;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,9 +32,22 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import org.apache.flink.connectors.hive.HiveConfVars;
+import org.apache.flink.core.testutils.CommonTestUtils;
+import org.apache.flink.table.api.ValidationException;
+import org.apache.flink.table.catalog.Catalog;
+import org.apache.flink.table.catalog.CommonCatalogOptions;
+import org.apache.flink.table.catalog.hive.HiveCatalog;
+import org.apache.flink.table.catalog.hive.HiveTestUtils;
+import org.apache.flink.table.factories.FactoryUtil;
+import org.apache.flink.testutils.executor.TestExecutorResource;
+import org.apache.flink.util.TestLogger;
+import org.apache.hadoop.hive.conf.HiveConf;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
 
 /** Test for {@link HiveCatalog} created by {@link HiveCatalogFactory}. */
 public class HiveCatalogFactoryTest extends TestLogger {
@@ -79,10 +77,7 @@ public class HiveCatalogFactoryTest extends TestLogger {
                 FactoryUtil.createCatalog(
                         catalogName, options, null, Thread.currentThread().getContextClassLoader());
 
-        assertThat(
-                        ((HiveCatalog) actualCatalog)
-                                .getHiveConf()
-                                .getVar(HiveConfVars.METASTORE_URIS))
+        assertThat(((HiveCatalog) actualCatalog).getHiveConf().getVar(HiveConfVars.METASTORE_URIS))
                 .isEqualTo("dummy-hms");
         checkEquals(expectedCatalog, (HiveCatalog) actualCatalog);
     }

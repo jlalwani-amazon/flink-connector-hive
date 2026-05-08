@@ -18,23 +18,20 @@
 
 package org.apache.flink.connectors.hive.util;
 
+import java.io.IOException;
 import org.apache.flink.api.java.hadoop.common.HadoopInputFormatCommonBase;
 import org.apache.flink.connectors.hive.HiveConfVars;
 import org.apache.flink.connectors.hive.JobConfWrapper;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.security.Credentials;
 import org.apache.hadoop.security.UserGroupInformation;
 
-import java.io.IOException;
-
 /** Utilities for {@link JobConf}. */
 public class JobConfUtils {
 
     /**
-     * Gets the {@link HiveConfVars#DEFAULT_PARTITION_NAME} value from the {@link
-     * JobConfWrapper}.
+     * Gets the {@link HiveConfVars#DEFAULT_PARTITION_NAME} value from the {@link JobConfWrapper}.
      */
     public static String getDefaultPartitionName(JobConfWrapper confWrapper) {
         return getDefaultPartitionName(confWrapper.conf());

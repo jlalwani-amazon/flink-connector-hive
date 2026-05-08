@@ -18,6 +18,24 @@
 
 package org.apache.flink.connectors.hive;
 
+import static org.apache.flink.table.planner.utils.TableTestUtil.readFromResource;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assume.assumeFalse;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.apache.flink.configuration.BatchExecutionOptions;
 import org.apache.flink.connector.file.table.FileSystemConnectorOptions;
 import org.apache.flink.table.HiveVersionTestUtil;
@@ -36,7 +54,6 @@ import org.apache.flink.table.planner.delegation.hive.HiveParserUtils;
 import org.apache.flink.types.Row;
 import org.apache.flink.util.CollectionUtil;
 import org.apache.flink.util.FileUtils;
-
 import org.apache.hadoop.hive.common.type.HiveDecimal;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
@@ -54,25 +71,6 @@ import org.junit.ClassRule;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import static org.apache.flink.table.planner.utils.TableTestUtil.readFromResource;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assume.assumeFalse;
 
 /** Test hive query compatibility. */
 public class HiveDialectQueryITCase {
@@ -965,8 +963,7 @@ public class HiveDialectQueryITCase {
         LocalDateTime expectDateTime =
                 hiveShim.toFlinkTimestamp(
                         PrimitiveObjectInspectorUtils.getTimestamp(
-                                testTimestamp,
-                                new JavaConstantLongObjectInspector(testTimestamp)));
+                                testTimestamp, new JavaConstantLongObjectInspector(testTimestamp)));
         try {
             tableEnv.executeSql(
                             String.format(

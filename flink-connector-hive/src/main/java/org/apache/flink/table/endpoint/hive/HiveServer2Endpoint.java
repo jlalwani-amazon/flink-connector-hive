@@ -18,6 +18,42 @@
 
 package org.apache.flink.table.endpoint.hive;
 
+import static org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE;
+import static org.apache.flink.table.api.config.TableConfigOptions.TABLE_DML_SYNC;
+import static org.apache.flink.table.api.config.TableConfigOptions.TABLE_SQL_DIALECT;
+import static org.apache.flink.table.endpoint.hive.HiveServer2EndpointVersion.HIVE_CLI_SERVICE_PROTOCOL_V10;
+import static org.apache.flink.table.endpoint.hive.util.HiveJdbcParameterUtils.getUsedDefaultDatabase;
+import static org.apache.flink.table.endpoint.hive.util.HiveJdbcParameterUtils.setVariables;
+import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetCatalogsExecutor;
+import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetColumnsExecutor;
+import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetFunctionsExecutor;
+import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetPrimaryKeys;
+import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetSchemasExecutor;
+import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetTableTypesExecutor;
+import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetTablesExecutor;
+import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetTypeInfoExecutor;
+import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toFetchOrientation;
+import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toFlinkTableKinds;
+import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toOperationHandle;
+import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toSessionHandle;
+import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toTOperationHandle;
+import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toTOperationState;
+import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toTRowSet;
+import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toTSessionHandle;
+import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toTStatus;
+import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toTTableSchema;
+import static org.apache.flink.table.gateway.api.results.ResultSet.ResultType.EOS;
+import static org.apache.flink.util.Preconditions.checkNotNull;
+
+import java.net.InetSocketAddress;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ThreadPoolExecutor;
+import javax.annotation.Nullable;
 import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.api.common.RuntimeExecutionMode;
 import org.apache.flink.configuration.Configuration;
@@ -42,7 +78,6 @@ import org.apache.flink.table.gateway.api.session.SessionHandle;
 import org.apache.flink.table.gateway.api.utils.SqlGatewayException;
 import org.apache.flink.table.gateway.api.utils.ThreadUtils;
 import org.apache.flink.util.ExceptionUtils;
-
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hive.service.rpc.thrift.TCLIService;
 import org.apache.hive.service.rpc.thrift.TCancelDelegationTokenReq;
@@ -105,44 +140,6 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TTransportFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
-
-import java.net.InetSocketAddress;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ThreadPoolExecutor;
-
-import static org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE;
-import static org.apache.flink.table.api.config.TableConfigOptions.TABLE_DML_SYNC;
-import static org.apache.flink.table.api.config.TableConfigOptions.TABLE_SQL_DIALECT;
-import static org.apache.flink.table.endpoint.hive.HiveServer2EndpointVersion.HIVE_CLI_SERVICE_PROTOCOL_V10;
-import static org.apache.flink.table.endpoint.hive.util.HiveJdbcParameterUtils.getUsedDefaultDatabase;
-import static org.apache.flink.table.endpoint.hive.util.HiveJdbcParameterUtils.setVariables;
-import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetCatalogsExecutor;
-import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetColumnsExecutor;
-import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetFunctionsExecutor;
-import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetPrimaryKeys;
-import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetSchemasExecutor;
-import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetTableTypesExecutor;
-import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetTablesExecutor;
-import static org.apache.flink.table.endpoint.hive.util.OperationExecutorFactory.createGetTypeInfoExecutor;
-import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toFetchOrientation;
-import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toFlinkTableKinds;
-import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toOperationHandle;
-import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toSessionHandle;
-import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toTOperationHandle;
-import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toTOperationState;
-import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toTRowSet;
-import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toTSessionHandle;
-import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toTStatus;
-import static org.apache.flink.table.endpoint.hive.util.ThriftObjectConversions.toTTableSchema;
-import static org.apache.flink.table.gateway.api.results.ResultSet.ResultType.EOS;
-import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
  * HiveServer2 Endpoint that allows to accept the request from the hive client, e.g. Hive JDBC, Hive

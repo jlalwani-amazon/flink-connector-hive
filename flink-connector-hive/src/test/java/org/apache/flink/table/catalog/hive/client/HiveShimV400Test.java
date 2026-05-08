@@ -18,19 +18,17 @@
 
 package org.apache.flink.table.catalog.hive.client;
 
-import org.apache.flink.table.HiveVersionTestUtil;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assume.assumeTrue;
 
+import java.util.Collections;
+import java.util.Properties;
+import org.apache.flink.table.HiveVersionTestUtil;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDAFEvaluator;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.junit.Test;
-
-import java.util.Collections;
-import java.util.Properties;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
 
 /** Unit tests for Hive 4 shim methods. Only runs when Hive 4 jars are on the classpath. */
 public class HiveShimV400Test {

@@ -20,7 +20,6 @@ package org.apache.flink.table.planner.delegation.hive.copy;
 
 import org.apache.flink.table.catalog.hive.client.HiveShim;
 import org.apache.flink.table.planner.delegation.hive.parse.HiveASTParser;
-
 import org.apache.hadoop.hive.metastore.api.PrincipalType;
 
 /** Counterpart of hive's org.apache.hadoop.hive.ql.parse.authorization.AuthorizationParseUtils. */

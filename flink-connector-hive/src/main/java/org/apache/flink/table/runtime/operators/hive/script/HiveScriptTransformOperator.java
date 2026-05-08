@@ -18,6 +18,16 @@
 
 package org.apache.flink.table.runtime.operators.hive.script;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 import org.apache.flink.connectors.hive.FlinkHiveException;
 import org.apache.flink.connectors.hive.JobConfWrapper;
 import org.apache.flink.streaming.api.operators.BoundedOneInput;
@@ -31,7 +41,6 @@ import org.apache.flink.table.runtime.operators.TableStreamOperator;
 import org.apache.flink.table.runtime.script.ScriptTransformIOInfo;
 import org.apache.flink.table.runtime.util.StreamRecordCollector;
 import org.apache.flink.table.types.logical.LogicalType;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.exec.RecordReader;
 import org.apache.hadoop.hive.ql.exec.RecordWriter;
@@ -42,17 +51,6 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.StructField;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 import org.apache.hadoop.io.Writable;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 /** The operator for Hive's "transform xxx using 'script'". */
 public class HiveScriptTransformOperator extends TableStreamOperator<RowData>
@@ -224,8 +222,7 @@ public class HiveScriptTransformOperator extends TableStreamOperator<RowData>
         AbstractSerDe abstractSerDe = (AbstractSerDe) serdeClz.newInstance();
         Properties properties = new Properties();
         properties.putAll(props);
-        Configuration conf =
-                ((JobConfWrapper) scriptTransformIOInfo.getSerializableConf()).conf();
+        Configuration conf = ((JobConfWrapper) scriptTransformIOInfo.getSerializableConf()).conf();
         HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
                 .initializeSerDe(abstractSerDe, conf, properties, null);
         return abstractSerDe;

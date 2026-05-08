@@ -18,6 +18,17 @@
 
 package org.apache.flink.connectors.hive;
 
+import static org.apache.flink.core.testutils.FlinkAssertions.anyCauseMatches;
+import static org.apache.flink.table.catalog.hive.util.Constants.TABLE_LOCATION_URI;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
 import org.apache.flink.table.HiveVersionTestUtil;
 import org.apache.flink.table.api.ResultKind;
 import org.apache.flink.table.api.Schema;
@@ -52,7 +63,6 @@ import org.apache.flink.types.Row;
 import org.apache.flink.util.CollectionUtil;
 import org.apache.flink.util.FileUtils;
 import org.apache.flink.util.UserClassLoaderJarTestUtils;
-
 import org.apache.hadoop.hive.metastore.TableType;
 import org.apache.hadoop.hive.metastore.api.Database;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
@@ -78,18 +88,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import static org.apache.flink.core.testutils.FlinkAssertions.anyCauseMatches;
-import static org.apache.flink.table.catalog.hive.util.Constants.TABLE_LOCATION_URI;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 /** Test Hive syntax when Hive dialect is used. */
 public class HiveDialectITCase {
 
@@ -104,8 +102,7 @@ public class HiveDialectITCase {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         hiveCatalog
                 .getHiveConf()
-                .setBoolVar(
-                        HiveConfVars.METASTORE_DISALLOW_INCOMPATIBLE_COL_TYPE_CHANGES, false);
+                .setBoolVar(HiveConfVars.METASTORE_DISALLOW_INCOMPATIBLE_COL_TYPE_CHANGES, false);
         hiveCatalog.open();
         warehouse = hiveCatalog.getHiveConf().getVar(HiveConfVars.METASTORE_WAREHOUSE);
         tableEnv = HiveTestUtils.createTableEnvInBatchMode();
@@ -1224,8 +1221,7 @@ public class HiveDialectITCase {
         if (hiveCatalog.getHiveVersion().compareTo("4.0.0") >= 0) {
             expectedTableProperties =
                     expectedTableProperties.replace(
-                            "  'k1'='v1'",
-                            "  'external.table.purge'='TRUE', \n  'k1'='v1'");
+                            "  'k1'='v1'", "  'external.table.purge'='TRUE', \n  'k1'='v1'");
         }
         // Hive 4 defaults to external tables
         String createTablePrefix =
@@ -1251,7 +1247,8 @@ public class HiveDialectITCase {
                                 + "LOCATION\n"
                                 + "  'file:%s'\n"
                                 + "TBLPROPERTIES (\n%s)\n",
-                        warehouse + "/t2", expectedTableProperties);
+                        warehouse + "/t2",
+                        expectedTableProperties);
         assertThat(actualResult).isEqualTo(expectedResult);
     }
 

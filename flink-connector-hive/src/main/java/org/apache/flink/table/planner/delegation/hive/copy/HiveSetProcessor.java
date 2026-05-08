@@ -18,14 +18,11 @@
 
 package org.apache.flink.table.planner.delegation.hive.copy;
 
-import org.apache.flink.connectors.hive.FlinkHiveException;
-import org.apache.flink.connectors.hive.HiveConfVars;
-import org.apache.flink.table.api.TableConfig;
-
-import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hadoop.hive.conf.VariableSubstitution;
-import org.apache.hadoop.hive.ql.metadata.Hive;
-import org.apache.hadoop.hive.ql.metadata.HiveException;
+import static org.apache.hadoop.hive.conf.SystemVariables.ENV_PREFIX;
+import static org.apache.hadoop.hive.conf.SystemVariables.HIVECONF_PREFIX;
+import static org.apache.hadoop.hive.conf.SystemVariables.HIVEVAR_PREFIX;
+import static org.apache.hadoop.hive.conf.SystemVariables.METACONF_PREFIX;
+import static org.apache.hadoop.hive.conf.SystemVariables.SYSTEM_PREFIX;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +30,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import static org.apache.hadoop.hive.conf.SystemVariables.ENV_PREFIX;
-import static org.apache.hadoop.hive.conf.SystemVariables.HIVECONF_PREFIX;
-import static org.apache.hadoop.hive.conf.SystemVariables.HIVEVAR_PREFIX;
-import static org.apache.hadoop.hive.conf.SystemVariables.METACONF_PREFIX;
-import static org.apache.hadoop.hive.conf.SystemVariables.SYSTEM_PREFIX;
+import org.apache.flink.connectors.hive.FlinkHiveException;
+import org.apache.flink.connectors.hive.HiveConfVars;
+import org.apache.flink.table.api.TableConfig;
+import org.apache.hadoop.hive.conf.HiveConf;
+import org.apache.hadoop.hive.conf.VariableSubstitution;
+import org.apache.hadoop.hive.ql.metadata.Hive;
+import org.apache.hadoop.hive.ql.metadata.HiveException;
 
 /** Counterpart of hive's {@link org.apache.hadoop.hive.ql.processors.SetProcessor}. */
 public class HiveSetProcessor {

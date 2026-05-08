@@ -18,10 +18,9 @@
 
 package org.apache.flink.connectors.hive;
 
-import org.apache.flink.table.catalog.hive.client.HiveShimLoader;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.apache.flink.table.catalog.hive.client.HiveShimLoader;
 
 /** Loader to load proper HiveRunnerShim. */
 public class HiveRunnerShimLoader {

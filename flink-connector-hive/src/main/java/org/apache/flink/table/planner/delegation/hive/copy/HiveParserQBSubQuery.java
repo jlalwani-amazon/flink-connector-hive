@@ -18,14 +18,18 @@
 
 package org.apache.flink.table.planner.delegation.hive.copy;
 
+import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.unescapeIdentifier;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+import org.apache.calcite.plan.RelOptCluster;
+import org.apache.calcite.tools.FrameworkConfig;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.flink.table.planner.delegation.hive.HiveParserTypeCheckProcFactory;
 import org.apache.flink.table.planner.delegation.hive.HiveParserUtils;
 import org.apache.flink.table.planner.delegation.hive.parse.HiveASTParser;
 import org.apache.flink.table.planner.delegation.hive.parse.HiveParserErrorMsg;
-
-import org.apache.calcite.plan.RelOptCluster;
-import org.apache.calcite.tools.FrameworkConfig;
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.hadoop.hive.ql.ErrorMsg;
 import org.apache.hadoop.hive.ql.exec.ColumnInfo;
 import org.apache.hadoop.hive.ql.lib.Node;
@@ -35,12 +39,6 @@ import org.apache.hadoop.hive.ql.plan.ExprNodeColumnDesc;
 import org.apache.hadoop.hive.ql.plan.ExprNodeConstantDesc;
 import org.apache.hadoop.hive.ql.plan.ExprNodeDesc;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
-import static org.apache.flink.table.planner.delegation.hive.copy.HiveParserBaseSemanticAnalyzer.unescapeIdentifier;
 
 /** Counterpart of hive's org.apache.hadoop.hive.ql.parse.QBSubQuery. */
 public class HiveParserQBSubQuery {
@@ -272,8 +270,7 @@ public class HiveParserQBSubQuery {
                 try {
                     cInfo = parentQueryRR.getExpression(expr);
                     if (cInfo != null) {
-                        return MutablePair.of(
-                                HiveParserQBSubQuery.ExprType.REFERS_PARENT, cInfo);
+                        return MutablePair.of(HiveParserQBSubQuery.ExprType.REFERS_PARENT, cInfo);
                     }
                 } catch (SemanticException se) {
                 }
