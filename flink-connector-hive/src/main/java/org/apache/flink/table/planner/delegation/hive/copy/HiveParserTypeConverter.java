@@ -215,8 +215,14 @@ public class HiveParserTypeConverter {
     private static RelDataType convert(
             StructTypeInfo structType, final RelDataTypeFactory dtFactory)
             throws SemanticException {
-        List<RelDataType> fTypes = new ArrayList<>(HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion()).getStructFieldTypeInfos(structType).size());
-        for (TypeInfo ti : HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion()).getStructFieldTypeInfos(structType)) {
+        List<RelDataType> fTypes =
+                new ArrayList<>(
+                        HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
+                                .getStructFieldTypeInfos(structType)
+                                .size());
+        for (TypeInfo ti :
+                HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
+                        .getStructFieldTypeInfos(structType)) {
             fTypes.add(convert(ti, dtFactory));
         }
         return dtFactory.createStructType(

@@ -284,7 +284,8 @@ public class HiveParserTypeCheckProcFactory {
 
         // The dispatcher fires the processor corresponding to the closest matching
         // rule and passes the context along
-        Dispatcher disp = new HiveParserRuleDispatcher(tf.getDefaultExprProcessor(), opRules, tcCtx);
+        Dispatcher disp =
+                new HiveParserRuleDispatcher(tf.getDefaultExprProcessor(), opRules, tcCtx);
         GraphWalker ogw = new HiveParserExpressionWalker(disp);
 
         // Create a list of top nodes

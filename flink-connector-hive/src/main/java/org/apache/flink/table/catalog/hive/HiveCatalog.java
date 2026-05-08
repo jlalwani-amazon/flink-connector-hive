@@ -917,9 +917,7 @@ public class HiveCatalog extends AbstractCatalog {
                                     HivePartitionUtils.createPartitionSpec(
                                             p,
                                             getHiveConf()
-                                                    .getVar(
-                                                            HiveConfVars
-                                                                    .DEFAULT_PARTITION_NAME)))
+                                                    .getVar(HiveConfVars.DEFAULT_PARTITION_NAME)))
                     .collect(Collectors.toList());
         } catch (TException e) {
             throw new CatalogException(
@@ -960,9 +958,7 @@ public class HiveCatalog extends AbstractCatalog {
                                     HivePartitionUtils.createPartitionSpec(
                                             p,
                                             getHiveConf()
-                                                    .getVar(
-                                                            HiveConfVars
-                                                                    .DEFAULT_PARTITION_NAME)))
+                                                    .getVar(HiveConfVars.DEFAULT_PARTITION_NAME)))
                     .collect(Collectors.toList());
         } catch (TException e) {
             throw new CatalogException(

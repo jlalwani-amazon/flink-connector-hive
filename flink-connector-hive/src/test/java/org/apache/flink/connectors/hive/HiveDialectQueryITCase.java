@@ -965,8 +965,7 @@ public class HiveDialectQueryITCase {
         LocalDateTime expectDateTime =
                 hiveShim.toFlinkTimestamp(
                         PrimitiveObjectInspectorUtils.getTimestamp(
-                                testTimestamp,
-                                new JavaConstantLongObjectInspector(testTimestamp)));
+                                testTimestamp, new JavaConstantLongObjectInspector(testTimestamp)));
         try {
             tableEnv.executeSql(
                             String.format(

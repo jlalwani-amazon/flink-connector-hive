@@ -79,10 +79,7 @@ public class HiveCatalogFactoryTest extends TestLogger {
                 FactoryUtil.createCatalog(
                         catalogName, options, null, Thread.currentThread().getContextClassLoader());
 
-        assertThat(
-                        ((HiveCatalog) actualCatalog)
-                                .getHiveConf()
-                                .getVar(HiveConfVars.METASTORE_URIS))
+        assertThat(((HiveCatalog) actualCatalog).getHiveConf().getVar(HiveConfVars.METASTORE_URIS))
                 .isEqualTo("dummy-hms");
         checkEquals(expectedCatalog, (HiveCatalog) actualCatalog);
     }

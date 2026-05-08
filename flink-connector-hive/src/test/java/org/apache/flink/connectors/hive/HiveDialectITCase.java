@@ -104,8 +104,7 @@ public class HiveDialectITCase {
         hiveCatalog = HiveTestUtils.createHiveCatalog();
         hiveCatalog
                 .getHiveConf()
-                .setBoolVar(
-                        HiveConfVars.METASTORE_DISALLOW_INCOMPATIBLE_COL_TYPE_CHANGES, false);
+                .setBoolVar(HiveConfVars.METASTORE_DISALLOW_INCOMPATIBLE_COL_TYPE_CHANGES, false);
         hiveCatalog.open();
         warehouse = hiveCatalog.getHiveConf().getVar(HiveConfVars.METASTORE_WAREHOUSE);
         tableEnv = HiveTestUtils.createTableEnvInBatchMode();
@@ -1224,8 +1223,7 @@ public class HiveDialectITCase {
         if (hiveCatalog.getHiveVersion().compareTo("4.0.0") >= 0) {
             expectedTableProperties =
                     expectedTableProperties.replace(
-                            "  'k1'='v1'",
-                            "  'external.table.purge'='TRUE', \n  'k1'='v1'");
+                            "  'k1'='v1'", "  'external.table.purge'='TRUE', \n  'k1'='v1'");
         }
         // Hive 4 defaults to external tables
         String createTablePrefix =
@@ -1251,7 +1249,8 @@ public class HiveDialectITCase {
                                 + "LOCATION\n"
                                 + "  'file:%s'\n"
                                 + "TBLPROPERTIES (\n%s)\n",
-                        warehouse + "/t2", expectedTableProperties);
+                        warehouse + "/t2",
+                        expectedTableProperties);
         assertThat(actualResult).isEqualTo(expectedResult);
     }
 

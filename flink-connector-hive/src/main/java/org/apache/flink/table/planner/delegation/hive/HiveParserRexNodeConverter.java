@@ -933,7 +933,8 @@ public class HiveParserRexNodeConverter {
      * class checks.
      */
     private static boolean isGenericUDFCase(Object udf) {
-        return udf.getClass().getName().equals(
-                "org.apache.hadoop.hive.ql.udf.generic.GenericUDFCase");
+        return udf.getClass()
+                .getName()
+                .equals("org.apache.hadoop.hive.ql.udf.generic.GenericUDFCase");
     }
 }

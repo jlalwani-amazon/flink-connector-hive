@@ -372,7 +372,8 @@ public class HiveParserRowResolver implements Serializable {
         int i = 0;
 
         int outputColPos = outputColPosRef == null ? 0 : outputColPosRef.val;
-        for (ColumnInfo cInfoFrmInput : HiveReflectionUtils.getRowSchemaSignature(rrToAddFrom.getRowSchema())) {
+        for (ColumnInfo cInfoFrmInput :
+                HiveReflectionUtils.getRowSchemaSignature(rrToAddFrom.getRowSchema())) {
             if (numColumns >= 0 && i == numColumns) {
                 break;
             }

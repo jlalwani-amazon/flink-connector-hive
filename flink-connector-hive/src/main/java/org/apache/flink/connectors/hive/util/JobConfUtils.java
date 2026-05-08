@@ -33,8 +33,7 @@ import java.io.IOException;
 public class JobConfUtils {
 
     /**
-     * Gets the {@link HiveConfVars#DEFAULT_PARTITION_NAME} value from the {@link
-     * JobConfWrapper}.
+     * Gets the {@link HiveConfVars#DEFAULT_PARTITION_NAME} value from the {@link JobConfWrapper}.
      */
     public static String getDefaultPartitionName(JobConfWrapper confWrapper) {
         return getDefaultPartitionName(confWrapper.conf());

@@ -296,12 +296,9 @@ public class HiveParserDDLSemanticAnalyzer {
         reservedPartitionValues.add(
                 HiveConf.getVar(conf, HiveConfVars.DEFAULT_ZOOKEEPER_PARTITION_NAME));
         // Partition value can't end in this suffix
-        reservedPartitionValues.add(
-                HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_ORIGINAL));
-        reservedPartitionValues.add(
-                HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_ARCHIVED));
-        reservedPartitionValues.add(
-                HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_EXTRACTED));
+        reservedPartitionValues.add(HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_ORIGINAL));
+        reservedPartitionValues.add(HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_ARCHIVED));
+        reservedPartitionValues.add(HiveConf.getVar(conf, HiveConfVars.METASTORE_INT_EXTRACTED));
     }
 
     private Table getTable(ObjectPath tablePath) {
@@ -1280,7 +1277,8 @@ public class HiveParserDDLSemanticAnalyzer {
         String ownerName;
         Object ownerType;
         try {
-            ownerName = (String) principalDesc.getClass().getMethod("getName").invoke(principalDesc);
+            ownerName =
+                    (String) principalDesc.getClass().getMethod("getName").invoke(principalDesc);
             ownerType = principalDesc.getClass().getMethod("getType").invoke(principalDesc);
         } catch (Exception e) {
             throw new SemanticException("Failed to read PrincipalDesc", e);
@@ -1805,9 +1803,7 @@ public class HiveParserDDLSemanticAnalyzer {
             spec = new CatalogPartitionSpec(new HashMap<>(partSpec));
         }
         return new ShowPartitionsOperation(
-                tableIdentifier,
-                spec,
-                HiveConf.getVar(conf, HiveConfVars.DEFAULT_PARTITION_NAME));
+                tableIdentifier, spec, HiveConf.getVar(conf, HiveConfVars.DEFAULT_PARTITION_NAME));
     }
 
     private Operation convertShowDatabases() {

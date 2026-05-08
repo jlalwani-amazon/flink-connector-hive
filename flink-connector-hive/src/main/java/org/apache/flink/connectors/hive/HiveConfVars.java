@@ -23,7 +23,6 @@ import org.apache.hadoop.hive.conf.HiveConf;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * Compatibility shim for {@link HiveConf.ConfVars} enum constants that were renamed in Hive 4.0
  * (HIVE-27925). Hive 4 adopted snake_case naming (e.g. {@code METASTOREURIS} became {@code
@@ -56,17 +55,13 @@ public class HiveConfVars {
             resolveConfVar("HIVE_DEFAULT_FILEFORMAT");
     public static final HiveConf.ConfVars HIVE_DEFAULT_RCFILE_SERDE =
             resolveConfVar("HIVE_DEFAULT_RCFILE_SERDE");
-    public static final HiveConf.ConfVars HIVE_DEFAULT_SERDE =
-            resolveConfVar("HIVE_DEFAULT_SERDE");
-    public static final HiveConf.ConfVars HIVE_GROUPBY_SKEW =
-            resolveConfVar("HIVE_GROUPBY_SKEW");
-    public static final HiveConf.ConfVars HIVE_MAPRED_MODE =
-            resolveConfVar("HIVE_MAPRED_MODE");
+    public static final HiveConf.ConfVars HIVE_DEFAULT_SERDE = resolveConfVar("HIVE_DEFAULT_SERDE");
+    public static final HiveConf.ConfVars HIVE_GROUPBY_SKEW = resolveConfVar("HIVE_GROUPBY_SKEW");
+    public static final HiveConf.ConfVars HIVE_MAPRED_MODE = resolveConfVar("HIVE_MAPRED_MODE");
     public static final HiveConf.ConfVars HIVE_QUERY_ID = resolveConfVar("HIVE_QUERY_ID");
     public static final HiveConf.ConfVars HIVE_SCRIPT_ENV_BLACKLIST =
             resolveConfVar("HIVE_SCRIPT_ENV_BLACKLIST");
-    public static final HiveConf.ConfVars HIVE_SCRIPT_ESCAPE =
-            resolveConfVar("HIVE_SCRIPT_ESCAPE");
+    public static final HiveConf.ConfVars HIVE_SCRIPT_ESCAPE = resolveConfVar("HIVE_SCRIPT_ESCAPE");
     public static final HiveConf.ConfVars HIVE_SCRIPT_ID_ENV_VAR =
             resolveConfVar("HIVE_SCRIPT_ID_ENV_VAR");
     public static final HiveConf.ConfVars HIVE_SCRIPT_TRUNCATE_ENV =
@@ -116,10 +111,8 @@ public class HiveConfVars {
     public static final HiveConf.ConfVars HADOOP_BIN = resolveConfVar("HADOOP_BIN");
     public static final HiveConf.ConfVars HIVE_AUTHORIZATION_MANAGER =
             resolveConfVar("HIVE_AUTHORIZATION_MANAGER");
-    public static final HiveConf.ConfVars HIVE_CBO_ENABLED =
-            resolveConfVar("HIVE_CBO_ENABLED");
-    public static final HiveConf.ConfVars HIVE_CONVERT_JOIN =
-            resolveConfVar("HIVE_CONVERT_JOIN");
+    public static final HiveConf.ConfVars HIVE_CBO_ENABLED = resolveConfVar("HIVE_CBO_ENABLED");
+    public static final HiveConf.ConfVars HIVE_CONVERT_JOIN = resolveConfVar("HIVE_CONVERT_JOIN");
     public static final HiveConf.ConfVars HIVE_COUNTERS_PULL_INTERVAL =
             resolveConfVar("HIVE_COUNTERS_PULL_INTERVAL");
     public static final HiveConf.ConfVars HIVE_HISTORY_FILE_LOC =
@@ -138,10 +131,8 @@ public class HiveConfVars {
     public static final HiveConf.ConfVars HIVE_SKEW_JOIN = resolveConfVar("HIVE_SKEW_JOIN");
     public static final HiveConf.ConfVars HIVE_SUPPORT_CONCURRENCY =
             resolveConfVar("HIVE_SUPPORT_CONCURRENCY");
-    public static final HiveConf.ConfVars HIVE_TXN_MANAGER =
-            resolveConfVar("HIVE_TXN_MANAGER");
-    public static final HiveConf.ConfVars LOCAL_SCRATCH_DIR =
-            resolveConfVar("LOCAL_SCRATCH_DIR");
+    public static final HiveConf.ConfVars HIVE_TXN_MANAGER = resolveConfVar("HIVE_TXN_MANAGER");
+    public static final HiveConf.ConfVars LOCAL_SCRATCH_DIR = resolveConfVar("LOCAL_SCRATCH_DIR");
     public static final HiveConf.ConfVars METASTORE_CONNECT_URL_KEY =
             resolveConfVar("METASTORE_CONNECT_URL_KEY");
     public static final HiveConf.ConfVars METASTORE_DISALLOW_INCOMPATIBLE_COL_TYPE_CHANGES =

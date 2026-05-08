@@ -577,8 +577,7 @@ class HiveTableSinkITCase {
         tEnv.useCatalog(hiveCatalog.getName());
 
         String successFileName = tEnv.getConfig().get(SINK_PARTITION_COMMIT_SUCCESS_FILE_NAME);
-        String warehouse =
-                hiveCatalog.getHiveConf().get(HiveConfVars.METASTORE_WAREHOUSE.varname);
+        String warehouse = hiveCatalog.getHiveConf().get(HiveConfVars.METASTORE_WAREHOUSE.varname);
 
         tEnv.executeSql("CREATE TABLE zm_test_non_partition_table (name string)");
         tEnv.executeSql(
@@ -660,8 +659,7 @@ class HiveTableSinkITCase {
                                 -1, 2, getPathSize(Paths.get(wareHouse, "t1")), -1));
         statistics = hiveCatalog.getTableStatistics(new ObjectPath("default", "t2"));
         // Hive 4 reports different rawDataSize for ORC (16 vs 8)
-        long expectedOrcRawDataSize =
-                hiveCatalog.getHiveVersion().compareTo("4.0.0") >= 0 ? 16 : 8;
+        long expectedOrcRawDataSize = hiveCatalog.getHiveVersion().compareTo("4.0.0") >= 0 ? 16 : 8;
         assertThat(statistics)
                 .isEqualTo(
                         new CatalogTableStatistics(

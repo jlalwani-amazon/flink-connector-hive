@@ -1548,7 +1548,8 @@ public class HiveParserCalcitePlanner {
                     throw new SemanticException(
                             "Duplicates detected when adding columns to RR: see previous message");
                 }
-                int vColPos = HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
+                int vColPos =
+                        HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
                 for (Pair<HiveParserASTNode, TypeInfo> astTypePair : vcASTAndType) {
                     addedProjectRR.putExpression(
                             astTypePair.getKey(),
@@ -1706,7 +1707,8 @@ public class HiveParserCalcitePlanner {
                     throw new SemanticException(
                             "Duplicates detected when adding columns to RR: see previous message");
                 }
-                int vcolPos = HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
+                int vcolPos =
+                        HiveReflectionUtils.getRowSchemaSignature(inputRR.getRowSchema()).size();
                 for (Pair<HiveParserASTNode, TypeInfo> astTypePair : vcASTAndType) {
                     obSyntheticProjectRR.putExpression(
                             astTypePair.getKey(),
@@ -2665,7 +2667,8 @@ public class HiveParserCalcitePlanner {
                 i < correlRel.getRowType().getFieldCount();
                 i++) {
             projects.add(cluster.getRexBuilder().makeInputRef(correlRel, i));
-            ColumnInfo inputColInfo = HiveReflectionUtils.getRowSchemaSignature(correlRR.getRowSchema()).get(i);
+            ColumnInfo inputColInfo =
+                    HiveReflectionUtils.getRowSchemaSignature(correlRR.getRowSchema()).get(i);
             String colAlias = inputColInfo.getAlias();
             ColumnInfo colInfo =
                     new ColumnInfo(

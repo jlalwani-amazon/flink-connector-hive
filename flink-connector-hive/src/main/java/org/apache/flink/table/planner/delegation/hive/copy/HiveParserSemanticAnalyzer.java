@@ -1671,10 +1671,21 @@ public class HiveParserSemanticAnalyzer {
                                 String ctasDbName = null;
                                 if (tableDesc != null) {
                                     try {
-                                        ctasLocation = (String) tableDesc.getClass().getMethod("getLocation").invoke(tableDesc);
-                                        ctasDbName = (String) tableDesc.getClass().getMethod("getDatabaseName").invoke(tableDesc);
+                                        ctasLocation =
+                                                (String)
+                                                        tableDesc
+                                                                .getClass()
+                                                                .getMethod("getLocation")
+                                                                .invoke(tableDesc);
+                                        ctasDbName =
+                                                (String)
+                                                        tableDesc
+                                                                .getClass()
+                                                                .getMethod("getDatabaseName")
+                                                                .invoke(tableDesc);
                                     } catch (Exception e) {
-                                        throw new SemanticException("Failed to read CreateTableDesc", e);
+                                        throw new SemanticException(
+                                                "Failed to read CreateTableDesc", e);
                                     }
                                 }
                                 if (ctasLocation != null) {
@@ -1694,8 +1705,7 @@ public class HiveParserSemanticAnalyzer {
                                         throw new SemanticException(e);
                                     }
                                 }
-                                if (HiveConf.getBoolVar(
-                                        conf, HiveConfVars.HIVE_STATS_AUTOGATHER)) {
+                                if (HiveConf.getBoolVar(conf, HiveConfVars.HIVE_STATS_AUTOGATHER)) {
                                     TableSpec ts =
                                             new TableSpec(
                                                     catalogRegistry,

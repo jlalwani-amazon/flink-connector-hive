@@ -310,10 +310,7 @@ public interface HiveShim extends Serializable {
      * Walk an expression tree using PreOrderWalker. Hive 4 changed PreOrderWalker to require
      * SemanticDispatcher instead of Dispatcher.
      */
-    void walkExpressionTree(
-            Node expression,
-            Dispatcher dispatcher)
-            throws SemanticException;
+    void walkExpressionTree(Node expression, Dispatcher dispatcher) throws SemanticException;
 
     /**
      * Get a GenericUDAFEvaluator for windowing functions (LEAD/LAG). Hive 4 added a 5th boolean
@@ -325,7 +322,7 @@ public interface HiveShim extends Serializable {
             boolean isDistinct,
             boolean isAllColumns)
             throws SemanticException {
-        return org.apache.hadoop.hive.ql.exec.FunctionRegistry
-                .getGenericWindowingEvaluator(functionName, argumentOIs, isDistinct, isAllColumns);
+        return org.apache.hadoop.hive.ql.exec.FunctionRegistry.getGenericWindowingEvaluator(
+                functionName, argumentOIs, isDistinct, isAllColumns);
     }
 }

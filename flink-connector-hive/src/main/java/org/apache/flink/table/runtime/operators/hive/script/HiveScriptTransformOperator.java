@@ -224,8 +224,7 @@ public class HiveScriptTransformOperator extends TableStreamOperator<RowData>
         AbstractSerDe abstractSerDe = (AbstractSerDe) serdeClz.newInstance();
         Properties properties = new Properties();
         properties.putAll(props);
-        Configuration conf =
-                ((JobConfWrapper) scriptTransformIOInfo.getSerializableConf()).conf();
+        Configuration conf = ((JobConfWrapper) scriptTransformIOInfo.getSerializableConf()).conf();
         HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
                 .initializeSerDe(abstractSerDe, conf, properties, null);
         return abstractSerDe;

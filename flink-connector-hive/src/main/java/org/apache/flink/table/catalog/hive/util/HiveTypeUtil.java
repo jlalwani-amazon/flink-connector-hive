@@ -139,7 +139,9 @@ public class HiveTypeUtil {
                 List<String> names =
                         HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
                                 .getStructFieldNames(structTypeInfo);
-                List<TypeInfo> typeInfos = HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion()).getStructFieldTypeInfos(structTypeInfo);
+                List<TypeInfo> typeInfos =
+                        HiveShimLoader.loadHiveShim(HiveShimLoader.getHiveVersion())
+                                .getStructFieldTypeInfos(structTypeInfo);
 
                 DataTypes.Field[] fields = new DataTypes.Field[names.size()];
 
