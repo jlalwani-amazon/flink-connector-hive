@@ -31,6 +31,10 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 /** Base class for testing HiveCatalog. */
 public abstract class HiveCatalogMetadataTestBase extends CatalogTestBase {
 
+    @Override
+    public boolean supportsModels() {
+        return false;
+    }
     // ------ table and column stats ------
 
     @Override

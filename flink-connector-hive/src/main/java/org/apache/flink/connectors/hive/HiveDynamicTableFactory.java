@@ -77,6 +77,7 @@ public class HiveDynamicTableFactory implements DynamicTableSourceFactory, Dynam
                             null,
                             context.getObjectIdentifier(),
                             context.getCatalogTable(),
+                            context.getCatalogTable().getOptions(),
                             context.getConfiguration(),
                             context.getClassLoader(),
                             context.isTemporary());
@@ -109,6 +110,7 @@ public class HiveDynamicTableFactory implements DynamicTableSourceFactory, Dynam
                             null,
                             context.getObjectIdentifier(),
                             context.getCatalogTable(),
+                            context.getCatalogTable().getOptions(),
                             context.getConfiguration(),
                             context.getClassLoader(),
                             context.isTemporary());
