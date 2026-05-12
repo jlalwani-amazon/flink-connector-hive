@@ -46,7 +46,6 @@ under the License.
 		<reflections.version>0.9.8</reflections.version>
 		<!-- Hive uses illegal reflective access (StringInternUtils, FunctionRegistry);
 		     required on Java 17+ until upstream Hive removes setAccessible calls. -->
-		<flink.surefire.baseArgLine>-XX:+UseG1GC -Xms256m --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens java.base/java.time=ALL-UNNAMED --add-exports java.security.jgss/sun.security.krb5=ALL-UNNAMED</flink.surefire.baseArgLine>
 	</properties>
 
 	<dependencyManagement>
