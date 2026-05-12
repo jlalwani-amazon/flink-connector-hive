@@ -70,6 +70,10 @@ class TableEnvHiveConnectorITCase {
 
     @TempDir static java.nio.file.Path tempFolder;
 
+    private static File createSubDir(String name) throws java.io.IOException {
+        return Files.createDirectories(tempFolder.resolve(name)).toFile();
+    }
+
     @Test
     void testOverwriteWithEmptySource() throws Exception {
         TableEnvironment tableEnv = getTableEnvWithHiveCatalog();
@@ -570,7 +574,7 @@ class TableEnvHiveConnectorITCase {
     @Test
     void testLocationWithComma() throws Exception {
         TableEnvironment tableEnv = getTableEnvWithHiveCatalog();
-        File location = Files.createDirectories(tempFolder.resolve(",tbl1,location,")).toFile();
+        File location = createSubDir(",tbl1,location,");
         try {
             // test table location
             tableEnv.executeSql(
@@ -583,7 +587,7 @@ class TableEnvHiveConnectorITCase {
             assertThat(results.toString()).isEqualTo("[+I[1], +I[2]]");
             // test partition location
             tableEnv.executeSql("create table tbl2 (x int) partitioned by (p string)");
-            location = Files.createDirectories(tempFolder.resolve(",")).toFile();
+            location = createSubDir(",");
             tableEnv.executeSql(
                     String.format(
                             "alter table tbl2 add partition (p='a') location '%s'",

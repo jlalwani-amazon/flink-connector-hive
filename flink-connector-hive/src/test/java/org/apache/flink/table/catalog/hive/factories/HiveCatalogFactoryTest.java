@@ -26,9 +26,11 @@ import org.apache.flink.table.catalog.hive.HiveCatalog;
 import org.apache.flink.table.catalog.hive.HiveTestUtils;
 import org.apache.flink.table.factories.FactoryUtil;
 import org.apache.flink.testutils.executor.TestExecutorExtension;
+import org.apache.flink.util.TestLoggerExtension;
 
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -50,6 +52,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 /** Test for {@link HiveCatalog} created by {@link HiveCatalogFactory}. */
+@ExtendWith(TestLoggerExtension.class)
 class HiveCatalogFactoryTest {
 
     private static final URL CONF_DIR =
