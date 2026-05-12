@@ -93,11 +93,12 @@ public class HiveCatalogTest {
                         FactoryUtil.CONNECTOR.key(), DataGenTableSourceFactory.IDENTIFIER);
         CatalogTable originTable =
                 new ResolvedCatalogTable(
-                        CatalogTable.of(
-                                schema,
-                                "Flink non-managed table",
-                                new ArrayList<>(),
-                                originOptions),
+                        CatalogTable.newBuilder()
+                                .schema(schema)
+                                .comment("Flink non-managed table")
+                                .partitionKeys(new ArrayList<>())
+                                .options(originOptions)
+                                .build(),
                         resolvedSchema);
         hiveCatalog.createTable(tablePath, originTable, false);
 
@@ -105,8 +106,12 @@ public class HiveCatalogTest {
 
         CatalogTable newTable =
                 new ResolvedCatalogTable(
-                        CatalogTable.of(
-                                schema, "Flink managed table", new ArrayList<>(), newOptions),
+                        CatalogTable.newBuilder()
+                                .schema(schema)
+                                .comment("Flink managed table")
+                                .partitionKeys(new ArrayList<>())
+                                .options(newOptions)
+                                .build(),
                         resolvedSchema);
         assertThatThrownBy(() -> hiveCatalog.alterTable(tablePath, newTable, false))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -122,11 +127,12 @@ public class HiveCatalogTest {
                         FactoryUtil.CONNECTOR.key(), DataGenTableSourceFactory.IDENTIFIER);
         CatalogTable originTable =
                 new ResolvedCatalogTable(
-                        CatalogTable.of(
-                                schema,
-                                "Flink non-managed table",
-                                new ArrayList<>(),
-                                originOptions),
+                        CatalogTable.newBuilder()
+                                .schema(schema)
+                                .comment("Flink non-managed table")
+                                .partitionKeys(new ArrayList<>())
+                                .options(originOptions)
+                                .build(),
                         resolvedSchema);
         hiveCatalog.createTable(tablePath, originTable, false);
 
@@ -134,7 +140,12 @@ public class HiveCatalogTest {
         newOptions.put(FactoryUtil.CONNECTOR.key(), IDENTIFIER);
         CatalogTable newTable =
                 new ResolvedCatalogTable(
-                        CatalogTable.of(schema, "Hive table", new ArrayList<>(), newOptions),
+                        CatalogTable.newBuilder()
+                                .schema(schema)
+                                .comment("Hive table")
+                                .partitionKeys(new ArrayList<>())
+                                .options(newOptions)
+                                .build(),
                         resolvedSchema);
         assertThatThrownBy(() -> hiveCatalog.alterTable(tablePath, newTable, false))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -148,8 +159,12 @@ public class HiveCatalogTest {
         Map<String, String> originOptions = Collections.emptyMap();
         CatalogTable originTable =
                 new ResolvedCatalogTable(
-                        CatalogTable.of(
-                                schema, "Flink managed table", new ArrayList<>(), originOptions),
+                        CatalogTable.newBuilder()
+                                .schema(schema)
+                                .comment("Flink managed table")
+                                .partitionKeys(new ArrayList<>())
+                                .options(originOptions)
+                                .build(),
                         resolvedSchema);
         hiveCatalog.createTable(tablePath, originTable, false);
 
@@ -158,8 +173,12 @@ public class HiveCatalogTest {
                         FactoryUtil.CONNECTOR.key(), DataGenTableSourceFactory.IDENTIFIER);
         CatalogTable newTable =
                 new ResolvedCatalogTable(
-                        CatalogTable.of(
-                                schema, "Flink non-managed table", new ArrayList<>(), newOptions),
+                        CatalogTable.newBuilder()
+                                .schema(schema)
+                                .comment("Flink non-managed table")
+                                .partitionKeys(new ArrayList<>())
+                                .options(newOptions)
+                                .build(),
                         resolvedSchema);
         assertThatThrownBy(() -> hiveCatalog.alterTable(tablePath, newTable, false))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -173,8 +192,12 @@ public class HiveCatalogTest {
         Map<String, String> originOptions = Collections.emptyMap();
         CatalogTable originTable =
                 new ResolvedCatalogTable(
-                        CatalogTable.of(
-                                schema, "Flink managed table", new ArrayList<>(), originOptions),
+                        CatalogTable.newBuilder()
+                                .schema(schema)
+                                .comment("Flink managed table")
+                                .partitionKeys(new ArrayList<>())
+                                .options(originOptions)
+                                .build(),
                         resolvedSchema);
         hiveCatalog.createTable(tablePath, originTable, false);
 
@@ -182,7 +205,12 @@ public class HiveCatalogTest {
         newOptions.put(FactoryUtil.CONNECTOR.key(), IDENTIFIER);
         CatalogTable newTable =
                 new ResolvedCatalogTable(
-                        CatalogTable.of(schema, "Hive table", new ArrayList<>(), newOptions),
+                        CatalogTable.newBuilder()
+                                .schema(schema)
+                                .comment("Hive table")
+                                .partitionKeys(new ArrayList<>())
+                                .options(newOptions)
+                                .build(),
                         resolvedSchema);
         assertThatThrownBy(() -> hiveCatalog.alterTable(tablePath, newTable, false))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -197,15 +225,24 @@ public class HiveCatalogTest {
         originOptions.put(FactoryUtil.CONNECTOR.key(), IDENTIFIER);
         CatalogTable originTable =
                 new ResolvedCatalogTable(
-                        CatalogTable.of(schema, "Hive table", new ArrayList<>(), originOptions),
+                        CatalogTable.newBuilder()
+                                .schema(schema)
+                                .comment("Hive table")
+                                .partitionKeys(new ArrayList<>())
+                                .options(originOptions)
+                                .build(),
                         resolvedSchema);
         hiveCatalog.createTable(tablePath, originTable, false);
 
         Map<String, String> newOptions = Collections.emptyMap();
         CatalogTable newTable =
                 new ResolvedCatalogTable(
-                        CatalogTable.of(
-                                schema, "Flink managed table", new ArrayList<>(), newOptions),
+                        CatalogTable.newBuilder()
+                                .schema(schema)
+                                .comment("Flink managed table")
+                                .partitionKeys(new ArrayList<>())
+                                .options(newOptions)
+                                .build(),
                         resolvedSchema);
         assertThatThrownBy(() -> hiveCatalog.alterTable(tablePath, newTable, false))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -220,7 +257,12 @@ public class HiveCatalogTest {
         originOptions.put(FactoryUtil.CONNECTOR.key(), IDENTIFIER);
         CatalogTable originTable =
                 new ResolvedCatalogTable(
-                        CatalogTable.of(schema, "Hive table", new ArrayList<>(), originOptions),
+                        CatalogTable.newBuilder()
+                                .schema(schema)
+                                .comment("Hive table")
+                                .partitionKeys(new ArrayList<>())
+                                .options(originOptions)
+                                .build(),
                         resolvedSchema);
         hiveCatalog.createTable(tablePath, originTable, false);
 
@@ -229,8 +271,12 @@ public class HiveCatalogTest {
                         FactoryUtil.CONNECTOR.key(), DataGenTableSourceFactory.IDENTIFIER);
         CatalogTable newTable =
                 new ResolvedCatalogTable(
-                        CatalogTable.of(
-                                schema, "Flink managed table", new ArrayList<>(), newOptions),
+                        CatalogTable.newBuilder()
+                                .schema(schema)
+                                .comment("Flink managed table")
+                                .partitionKeys(new ArrayList<>())
+                                .options(newOptions)
+                                .build(),
                         resolvedSchema);
         assertThatThrownBy(() -> hiveCatalog.alterTable(tablePath, newTable, false))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -245,11 +291,12 @@ public class HiveCatalogTest {
                 HiveTableUtil.instantiateHiveTable(
                         new ObjectPath("test", "test"),
                         new ResolvedCatalogTable(
-                                CatalogTable.of(
-                                        schema,
-                                        null,
-                                        new ArrayList<>(),
-                                        getLegacyFileSystemConnectorOptions("/test_path")),
+                                CatalogTable.newBuilder()
+                                        .schema(schema)
+                                        .comment(null)
+                                        .partitionKeys(new ArrayList<>())
+                                        .options(getLegacyFileSystemConnectorOptions("/test_path"))
+                                        .build(),
                                 resolvedSchema),
                         HiveTestUtils.createHiveConf());
 
@@ -268,7 +315,12 @@ public class HiveCatalogTest {
                 HiveTableUtil.instantiateHiveTable(
                         new ObjectPath("test", "test"),
                         new ResolvedCatalogTable(
-                                CatalogTable.of(schema, null, new ArrayList<>(), options),
+                                CatalogTable.newBuilder()
+                                        .schema(schema)
+                                        .comment(null)
+                                        .partitionKeys(new ArrayList<>())
+                                        .options(options)
+                                        .build(),
                                 resolvedSchema),
                         HiveTestUtils.createHiveConf());
 
@@ -291,7 +343,13 @@ public class HiveCatalogTest {
         hiveCatalog.createTable(
                 hiveObjectPath,
                 new ResolvedCatalogTable(
-                        CatalogTable.of(schema, null, new ArrayList<>(), options), resolvedSchema),
+                        CatalogTable.newBuilder()
+                                .schema(schema)
+                                .comment(null)
+                                .partitionKeys(new ArrayList<>())
+                                .options(options)
+                                .build(),
+                        resolvedSchema),
                 false);
 
         CatalogBaseTable hiveTable = hiveCatalog.getTable(hiveObjectPath);
@@ -328,8 +386,12 @@ public class HiveCatalogTest {
         hiveCatalog.createTable(
                 hiveObjectPath,
                 new ResolvedCatalogTable(
-                        CatalogTable.of(
-                                Schema.newBuilder().build(), null, new ArrayList<>(), properties),
+                        CatalogTable.newBuilder()
+                                .schema(Schema.newBuilder().build())
+                                .comment(null)
+                                .partitionKeys(new ArrayList<>())
+                                .options(properties)
+                                .build(),
                         ResolvedSchema.of()),
                 false);
 
