@@ -73,7 +73,6 @@ import org.apache.hadoop.hive.serde.serdeConstants;
 import org.apache.hadoop.hive.serde2.columnar.LazyBinaryColumnarSerDe;
 import org.apache.hadoop.hive.serde2.lazybinary.LazyBinarySerDe;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -81,7 +80,6 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -90,6 +88,7 @@ import static org.apache.flink.core.testutils.FlinkAssertions.anyCauseMatches;
 import static org.apache.flink.table.catalog.hive.util.Constants.TABLE_LOCATION_URI;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /** Test Hive syntax when Hive dialect is used. */
 class HiveDialectITCase {
@@ -296,7 +295,7 @@ class HiveDialectITCase {
 
     @Test
     void testCreateTableWithConstraints() throws Exception {
-        Assumptions.assumeTrue(HiveVersionTestUtil.HIVE_310_OR_LATER);
+        assumeTrue(HiveVersionTestUtil.HIVE_310_OR_LATER);
         tableEnv.executeSql(
                 "create table tbl (x int,y int not null disable novalidate rely,z int not null disable novalidate norely,"
                         + "constraint pk_name primary key (x) disable rely)");
@@ -767,7 +766,7 @@ class HiveDialectITCase {
         String udfCode = String.format(udfCodeTemplate, udfClass);
         File jarFile =
                 UserClassLoaderJarTestUtils.createJarFile(
-                        Files.createDirectories(tempFolder.resolve("test-jar")).toFile(),
+                        HiveTestUtils.createTempSubDir(tempFolder, "test-jar"),
                         "test-udf.jar",
                         udfClass,
                         udfCode);
@@ -788,7 +787,7 @@ class HiveDialectITCase {
         udfCode = String.format(udfCodeTemplate, udfClass);
         jarFile =
                 UserClassLoaderJarTestUtils.createJarFile(
-                        Files.createDirectories(tempFolder.resolve("test-jar-1")).toFile(),
+                        HiveTestUtils.createTempSubDir(tempFolder, "test-jar-1"),
                         "test-udf-1.jar",
                         udfClass,
                         udfCode);

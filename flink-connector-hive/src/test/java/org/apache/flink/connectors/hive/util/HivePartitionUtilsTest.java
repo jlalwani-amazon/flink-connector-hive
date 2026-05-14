@@ -19,6 +19,7 @@
 package org.apache.flink.connectors.hive.util;
 
 import org.apache.flink.connectors.hive.HiveTablePartition;
+import org.apache.flink.table.catalog.hive.HiveTestUtils;
 
 import org.apache.hadoop.hive.metastore.api.StorageDescriptor;
 import org.junit.jupiter.api.Test;
@@ -45,8 +46,7 @@ class HivePartitionUtilsTest {
         String baseFilePath =
                 Objects.requireNonNull(this.getClass().getResource("/orc/test.orc")).getPath();
         File wareHouse =
-                Files.createDirectories(temporaryFolder.resolve("testHiveTablePartitionSerDe"))
-                        .toFile();
+                HiveTestUtils.createTempSubDir(temporaryFolder, "testHiveTablePartitionSerDe");
         int partitionNum = 10;
         List<HiveTablePartition> expectedHiveTablePartitions = new ArrayList<>();
         for (int i = 0; i < partitionNum; i++) {

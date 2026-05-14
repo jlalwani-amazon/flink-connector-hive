@@ -180,7 +180,7 @@ class HiveCatalogITCase {
 
         Path p =
                 Paths.get(
-                        Files.createDirectories(tempFolder.resolve("csvApi")).toString(),
+                        HiveTestUtils.createTempSubDir(tempFolder, "csvApi").toString(),
                         "test.csv");
 
         final Map<String, String> sinkOptions = new HashMap<>();
@@ -253,9 +253,7 @@ class HiveCatalogITCase {
                                 srcPath));
 
         String sinkPath =
-                new File(
-                                Files.createDirectories(tempFolder.resolve("csvSink")).toFile(),
-                                "csv-order-sink")
+                new File(HiveTestUtils.createTempSubDir(tempFolder, "csvSink"), "csv-order-sink")
                         .toURI()
                         .toString();
 

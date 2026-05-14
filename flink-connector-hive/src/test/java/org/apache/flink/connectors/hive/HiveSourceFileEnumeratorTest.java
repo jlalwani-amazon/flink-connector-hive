@@ -19,6 +19,7 @@
 package org.apache.flink.connectors.hive;
 
 import org.apache.flink.connectors.hive.read.HiveSourceSplit;
+import org.apache.flink.table.catalog.hive.HiveTestUtils;
 
 import org.apache.hadoop.hive.metastore.api.SerDeInfo;
 import org.apache.hadoop.hive.metastore.api.StorageDescriptor;
@@ -50,8 +51,7 @@ class HiveSourceFileEnumeratorTest {
         String baseFilePath =
                 Objects.requireNonNull(this.getClass().getResource("/orc/test.orc")).getPath();
         long fileSize = Paths.get(baseFilePath).toFile().length();
-        File wareHouse =
-                Files.createDirectories(temporaryFolder.resolve("testCalculateFilesSize")).toFile();
+        File wareHouse = HiveTestUtils.createTempSubDir(temporaryFolder, "testCalculateFilesSize");
         int partitionNum = 10;
         long openCost = 1;
         List<HiveTablePartition> hiveTablePartitions = new ArrayList<>();
@@ -88,8 +88,7 @@ class HiveSourceFileEnumeratorTest {
         // create a jobConf with default configuration
         JobConf jobConf = new JobConf();
         jobConf.set(HiveOptions.TABLE_EXEC_HIVE_CALCULATE_PARTITION_SIZE_THREAD_NUM.key(), "1");
-        File wareHouse =
-                Files.createDirectories(temporaryFolder.resolve("testCreateInputSplits")).toFile();
+        File wareHouse = HiveTestUtils.createTempSubDir(temporaryFolder, "testCreateInputSplits");
         // init the files for the partition
         StorageDescriptor sd = new StorageDescriptor();
         // set orc format

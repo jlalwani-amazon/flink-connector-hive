@@ -174,7 +174,7 @@ class HiveCatalogUdfITCase extends AbstractTestBase {
         if (batch) {
             Path p =
                     Paths.get(
-                            Files.createDirectories(tempFolder.resolve("batch")).toString(),
+                            HiveTestUtils.createTempSubDir(tempFolder, "batch").toString(),
                             "test.csv");
 
             final ResolvedSchema sinkSchema =

@@ -44,7 +44,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -69,10 +68,6 @@ class TableEnvHiveConnectorITCase {
     }
 
     @TempDir static java.nio.file.Path tempFolder;
-
-    private static File createSubDir(String name) throws java.io.IOException {
-        return Files.createDirectories(tempFolder.resolve(name)).toFile();
-    }
 
     @Test
     void testOverwriteWithEmptySource() throws Exception {
@@ -574,7 +569,7 @@ class TableEnvHiveConnectorITCase {
     @Test
     void testLocationWithComma() throws Exception {
         TableEnvironment tableEnv = getTableEnvWithHiveCatalog();
-        File location = createSubDir(",tbl1,location,");
+        File location = HiveTestUtils.createTempSubDir(tempFolder, ",tbl1,location,");
         try {
             // test table location
             tableEnv.executeSql(
@@ -587,7 +582,7 @@ class TableEnvHiveConnectorITCase {
             assertThat(results.toString()).isEqualTo("[+I[1], +I[2]]");
             // test partition location
             tableEnv.executeSql("create table tbl2 (x int) partitioned by (p string)");
-            location = createSubDir(",");
+            location = HiveTestUtils.createTempSubDir(tempFolder, ",");
             tableEnv.executeSql(
                     String.format(
                             "alter table tbl2 add partition (p='a') location '%s'",
